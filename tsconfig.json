@@ -16,8 +16,12 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/pages/*": ["pages/*"],
-      "@/styles/*": ["styles/*"]
+      "pages/*": ["pages/*"],
+      "styles/*": ["styles/*"],
+      "types/*": ["shared/types/*"],
+      "enums/*": ["shared/enums/*"],
+      "components/*": ["shared/components/*"],
+      "sign-up/*": ["features/sign-up/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
