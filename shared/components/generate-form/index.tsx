@@ -1,6 +1,7 @@
 import { FormEventHandler, useCallback } from "react";
-import { Path, UseFormRegister } from "react-hook-form";
+import { UseFormRegister } from "react-hook-form";
 
+import { TextField, PasswordField } from "components/form-fields";
 import { InputTypes } from "shared/enums/input-type";
 import { FormField } from "types/form-field";
 import * as Styled from "./index.styled";
@@ -18,23 +19,13 @@ export const GenerateForm = <FormType extends object>({
 }: GenerateFormInputsProps<FormType>) => {
   const getFormField = useCallback(
     (formField: FormField) => {
-      const { type, key, label } = formField;
+      const { type } = formField;
 
       switch (type) {
         case InputTypes.TEXT:
-          return (
-            <Styled.Label key={label}>
-              <Styled.InputName>{label}</Styled.InputName>
-              <Styled.Input type={InputTypes.TEXT} {...register(key as Path<FormType>)} />
-            </Styled.Label>
-          );
+          return <TextField {...{ register, formField }} />;
         case InputTypes.PASSWORD:
-          return (
-            <Styled.Label key={label}>
-              <Styled.InputName>{label}</Styled.InputName>
-              <Styled.Input type={InputTypes.PASSWORD} {...register(key as Path<FormType>)} />
-            </Styled.Label>
-          );
+          return <PasswordField {...{ register, formField }} />;
         default:
           break;
       }
@@ -43,9 +34,11 @@ export const GenerateForm = <FormType extends object>({
   );
 
   return (
-    <Styled.Form onSubmit={handleSubmit} autoComplete="off">
+    <Styled.Form onSubmit={handleSubmit}>
       {formFields.map((formField) => getFormField(formField))}
-      <Styled.Input type="submit" value="Submit" />
+      <Styled.Button type="submit" value="Submit">
+        Submit
+      </Styled.Button>
     </Styled.Form>
   );
 };
