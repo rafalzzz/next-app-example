@@ -24,7 +24,7 @@ export const Input = styled.input<{ width?: number }>`
   :focus,
   :hover {
     outline: none;
-    border: ${(props) => props.theme.border.focus};
+    border: ${(props) => props.theme.border.hover};
   }
 `;
 

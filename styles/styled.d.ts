@@ -4,11 +4,12 @@ declare module "styled-components" {
   export interface DefaultTheme {
     border: {
       normal: string;
-      focus: string;
+      hover: string;
     };
 
     color: {
       primary: string;
+      hyperlink: string;
     };
   }
 }

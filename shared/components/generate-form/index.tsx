@@ -8,24 +8,26 @@ import * as Styled from "./index.styled";
 
 type GenerateFormInputsProps<FormType extends object> = {
   formFields: FormField[];
+  buttonValue: string;
   register: UseFormRegister<FormType>;
   handleSubmit: FormEventHandler<HTMLFormElement>;
 };
 
 export const GenerateForm = <FormType extends object>({
   formFields,
+  buttonValue,
   register,
   handleSubmit,
 }: GenerateFormInputsProps<FormType>) => {
   const getFormField = useCallback(
     (formField: FormField) => {
-      const { type } = formField;
+      const { type, key } = formField;
 
       switch (type) {
         case InputTypes.TEXT:
-          return <TextField {...{ register, formField }} />;
+          return <TextField key={key} {...{ register, formField }} />;
         case InputTypes.PASSWORD:
-          return <PasswordField {...{ register, formField }} />;
+          return <PasswordField key={key} {...{ register, formField }} />;
         default:
           break;
       }
@@ -37,7 +39,7 @@ export const GenerateForm = <FormType extends object>({
     <Styled.Form onSubmit={handleSubmit}>
       {formFields.map((formField) => getFormField(formField))}
       <Styled.Button type="submit" value="Submit">
-        Submit
+        {buttonValue}
       </Styled.Button>
     </Styled.Form>
   );

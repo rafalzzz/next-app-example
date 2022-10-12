@@ -19,12 +19,14 @@ enum SignUpFormLabels {
   PASSWORD = "Password",
 }
 
+const SIGN_IN_BUTTON_VALUE = "Sign in";
+
 const SIGN_UP_FORM_FIELDS: FormField[] = [
   { type: InputTypes.TEXT, key: SignUpFormKeys.LOGIN, label: SignUpFormLabels.LOGIN },
   { type: InputTypes.PASSWORD, key: SignUpFormKeys.PASSWORD, label: SignUpFormLabels.PASSWORD },
 ];
 
-const SignUpForm = () => {
+export const SignUpForm = () => {
   const { register, handleSubmit } = useForm<SignUpForm>();
 
   const onSubmit = (formData: SignUpForm) => console.log({ formData });
@@ -32,10 +34,9 @@ const SignUpForm = () => {
   return (
     <GenerateForm<SignUpForm>
       formFields={SIGN_UP_FORM_FIELDS}
+      buttonValue={SIGN_IN_BUTTON_VALUE}
       register={register}
       handleSubmit={handleSubmit(onSubmit)}
     />
   );
 };
-
-export default SignUpForm;

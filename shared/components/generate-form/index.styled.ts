@@ -6,6 +6,7 @@ export const Form = styled.form`
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  border ${(props) => props.theme.border.normal};
   border-radius: 5px;
 `;
 
