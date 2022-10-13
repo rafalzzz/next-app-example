@@ -1,8 +1,10 @@
-import { useState } from "react";
 import { Path, UseFormRegister } from "react-hook-form";
+import { useState } from "react";
 
+import { Hyperlink } from "components/hyperlink";
 import { InputTypes } from "shared/enums/input-type";
 import { FormField } from "types/form-field";
+import { Routes } from "enums/routes";
 import * as Styled from "./index.styled";
 
 type PasswordFieldProps<FormType extends object> = {
@@ -31,6 +33,7 @@ export const PasswordField = <FormType extends object>({
           {showPassword ? "Hide" : "Show"}
         </Styled.Button>
       </Styled.InputContainer>
+      <Hyperlink url={Routes.FORGOT_PASSWORD} text={"Forgot password?"} fontSize={0.8} />
     </Styled.Label>
   );
 };

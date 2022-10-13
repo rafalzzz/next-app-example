@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  compiler: {
+    styledComponents: true,
+  },
   eslint: {
     dirs: ["features", "pages", "shared", "styles"],
   },

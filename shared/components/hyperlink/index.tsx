@@ -6,10 +6,11 @@ import * as Styled from "./index.styled";
 type HyperlinkProps = {
   url: Routes;
   text: string;
+  fontSize?: number;
 };
 
-export const Hyperlink = ({ url, text }: HyperlinkProps) => (
+export const Hyperlink = ({ url, text, fontSize = 1 }: HyperlinkProps) => (
   <Link href={url}>
-    <Styled.Hyperlink>{text}</Styled.Hyperlink>
+    <Styled.Hyperlink fontSize={fontSize}>{text}</Styled.Hyperlink>
   </Link>
 );
