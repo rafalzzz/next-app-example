@@ -1,4 +1,3 @@
-import { Path, UseFormRegister } from "react-hook-form";
 import { useState } from "react";
 
 import { Hyperlink } from "components/hyperlink";
@@ -7,33 +6,37 @@ import { FormField } from "types/form-field";
 import { Routes } from "enums/routes";
 import * as Styled from "./index.styled";
 
-type PasswordFieldProps<FormType extends object> = {
+type PasswordFieldProps = {
   formField: FormField;
-  register: UseFormRegister<FormType>;
 };
 
-export const PasswordField = <FormType extends object>({
-  formField,
-  register,
-}: PasswordFieldProps<FormType>) => {
+export const PasswordField = ({ formField }: PasswordFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { key, label } = formField;
+  const { key, label, register, error } = formField;
 
   return (
-    <Styled.Label key={label}>
-      <Styled.InputName>{label}</Styled.InputName>
+    <Styled.Label key={key}>
+      <Styled.InputName>{`${label}:`}</Styled.InputName>
       <Styled.InputContainer>
         <Styled.Input
           type={showPassword ? InputTypes.TEXT : InputTypes.PASSWORD}
           width={250}
-          {...register(key as Path<FormType>)}
+          {...register}
         />
-        <Styled.Button type="button" onClick={() => setShowPassword((prevState) => !prevState)}>
+        <Styled.Button
+          type="button"
+          onClick={() => setShowPassword((prevState) => !prevState)}
+        >
           {showPassword ? "Hide" : "Show"}
         </Styled.Button>
       </Styled.InputContainer>
-      <Hyperlink url={Routes.FORGOT_PASSWORD} text={"Forgot password?"} fontSize={0.8} />
+      <Styled.Error marginBottom={10}>{error}</Styled.Error>
+      <Hyperlink
+        url={Routes.FORGOT_PASSWORD}
+        text={"Forgot password?"}
+        fontSize={0.8}
+      />
     </Styled.Label>
   );
 };

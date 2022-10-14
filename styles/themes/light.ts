@@ -7,5 +7,6 @@ export const light = {
   color: {
     primary: "#fff",
     hyperlink: "#87CEFA",
+    error: "#FF0000",
   },
 };

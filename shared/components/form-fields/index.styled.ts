@@ -9,11 +9,18 @@ export const Label = styled.label`
 export const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  padding: 10px 0;
+  padding: 0;
 `;
 
 export const InputName = styled.span`
   margin: 10px 0;
+`;
+
+export const Error = styled.div<{ marginBottom?: number }>`
+  font-size: 0.7rem;
+  color: ${(props) => props.theme.color.error};
+  margin-bottom: ${({ marginBottom }) =>
+    marginBottom ? `${marginBottom}px` : 0};
 `;
 
 export const Input = styled.input<{ width?: number }>`
@@ -29,7 +36,7 @@ export const Input = styled.input<{ width?: number }>`
 `;
 
 export const Button = styled.button`
-  height: 38px;
+  height: 37px;
   width: 50px;
   border-radius: 0 10px 10px 0;
   border: none;
