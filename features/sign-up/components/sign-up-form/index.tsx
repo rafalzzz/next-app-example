@@ -1,7 +1,6 @@
-import { InputTypes } from "shared/enums/input-type";
-import { FieldErrorsImpl, useForm, UseFormRegister } from "react-hook-form";
-
+import { useHandleFormData } from "shared/hooks/use-handle-form-data";
 import { GenerateForm } from "shared/components/generate-form";
+import { InputTypes } from "shared/enums/input-type";
 
 export type SignUpForm = {
   login: string;
@@ -20,42 +19,35 @@ enum SignUpFormLabels {
 
 const SIGN_IN_BUTTON_VALUE = "Sign in";
 
-const SIGN_UP_FORM_FIELDS = (
-  register: UseFormRegister<SignUpForm>,
-  errors: Partial<FieldErrorsImpl<SignUpForm>>
-) => [
+const SIGN_UP_FORM_FIELDS = [
   {
     type: InputTypes.TEXT,
     key: SignUpFormKeys.LOGIN,
     label: SignUpFormLabels.LOGIN,
-    register: register(SignUpFormKeys.LOGIN, {
+    validationRules: {
       required: "Login is required",
-    }),
-    error: errors[SignUpFormKeys.LOGIN]?.message,
+    },
   },
   {
     type: InputTypes.PASSWORD,
     key: SignUpFormKeys.PASSWORD,
     label: SignUpFormLabels.PASSWORD,
-    register: register(SignUpFormKeys.PASSWORD, {
+    validationRules: {
       required: "Password is required",
-    }),
-    error: errors[SignUpFormKeys.PASSWORD]?.message,
+    },
   },
 ];
 
 export const SignUpForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpForm>();
+  const { extendedFormFields, handleSubmit } = useHandleFormData<SignUpForm>({
+    formFields: SIGN_UP_FORM_FIELDS,
+  });
 
   const onSubmit = (formData: SignUpForm) => console.log({ formData });
 
   return (
     <GenerateForm
-      formFields={SIGN_UP_FORM_FIELDS(register, errors)}
+      formFields={extendedFormFields}
       buttonValue={SIGN_IN_BUTTON_VALUE}
       handleSubmit={handleSubmit(onSubmit)}
     />

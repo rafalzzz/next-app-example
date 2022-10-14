@@ -2,11 +2,19 @@ import { FormEventHandler, useCallback } from "react";
 
 import { TextField, PasswordField } from "components/form-fields";
 import { InputTypes } from "shared/enums/input-type";
-import { FormField } from "types/form-field";
 import * as Styled from "./index.styled";
+import { UseFormRegisterReturn } from "react-hook-form";
+
+export type ExtendedFormField = {
+  type: InputTypes;
+  key: string;
+  label: string;
+  register: UseFormRegisterReturn;
+  error?: string;
+};
 
 type GenerateFormInputsProps = {
-  formFields: FormField[];
+  formFields: ExtendedFormField[];
   buttonValue: string;
   handleSubmit: FormEventHandler<HTMLFormElement>;
 };
@@ -16,7 +24,7 @@ export const GenerateForm = ({
   buttonValue,
   handleSubmit,
 }: GenerateFormInputsProps) => {
-  const getFormField = useCallback((formField: FormField) => {
+  const getFormField = useCallback((formField: ExtendedFormField) => {
     const { type, key } = formField;
 
     switch (type) {
