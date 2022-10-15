@@ -1,3 +1,3 @@
 export { PageHead } from "./head";
-export { SignInForm } from "./sign-in-form";
+export { SignUpForm } from "./sign-in-form";
 export { Footer } from "./footer";

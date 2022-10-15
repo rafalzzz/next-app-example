@@ -4,9 +4,9 @@ import * as Styled from "./index.styled";
 
 export const Footer = () => (
   <Styled.Footer>
-    <Styled.FooterTitle>Don&apos;t you have an account yet?</Styled.FooterTitle>
+    <Styled.FooterTitle>Do you have an account?</Styled.FooterTitle>
     <Styled.FooterSubTitle>
-      Go to <Hyperlink url={Routes.SIGN_UP} text="registration" />.
+      <Hyperlink url={Routes.LANDING_PAGE} text="Sign in" />!
     </Styled.FooterSubTitle>
   </Styled.Footer>
 );

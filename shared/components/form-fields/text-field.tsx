@@ -1,9 +1,9 @@
-import { InputTypes } from "shared/enums/input-type";
-import { FormField } from "types/form-field";
+import { InputTypes } from "enums/input-types";
+import { ExtendedFormField } from "types/extended-form-field";
 import * as Styled from "./index.styled";
 
 type TextFieldProps = {
-  formField: FormField;
+  formField: ExtendedFormField;
 };
 
 export const TextField = ({ formField }: TextFieldProps) => {
