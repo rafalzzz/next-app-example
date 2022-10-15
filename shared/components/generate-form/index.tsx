@@ -12,7 +12,7 @@ export type ExtendedFormField = {
   error?: string;
 };
 
-type GenerateFormInputsProps = {
+export type GenerateFormInputsProps = {
   formFields: ExtendedFormField[];
   buttonValue: string;
   handleSubmit: FormEventHandler<HTMLFormElement>;

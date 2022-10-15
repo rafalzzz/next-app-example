@@ -20,6 +20,7 @@
       "styles/*": ["styles/*"],
       "types/*": ["shared/types/*"],
       "enums/*": ["shared/enums/*"],
+      "helpers/*": ["shared/helpers/*"],
       "components/*": ["shared/components/*"],
       "sign-up/*": ["features/sign-up/*"]
     }
