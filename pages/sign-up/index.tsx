@@ -1,8 +1,10 @@
 import { Header } from "components/header";
 import type { NextPage } from "next";
-
-import { SignUpForm, Footer, PageHead } from "features/sign-up/components";
+import { Footer } from "components/footer";
+import { SignUpForm, PageHead } from "features/sign-up/components";
 import * as Styled from "../index.styled";
+import { Routes } from "enums/routes";
+import { Hyperlink } from "components/hyperlink";
 
 const Home: NextPage = () => {
   return (
@@ -11,7 +13,10 @@ const Home: NextPage = () => {
       <Styled.Main>
         <Header title="Sign-up to our app!" />
         <SignUpForm />
-        <Footer />
+        <Footer
+          title="Do you have an account?"
+          child={<Hyperlink url={Routes.LANDING_PAGE} text="Sign in" />}
+        />
       </Styled.Main>
     </Styled.Container>
   );
