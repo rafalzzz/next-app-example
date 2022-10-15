@@ -3,7 +3,7 @@ import {
   capitalizeFirstLetter,
   generateMessageFieldIsRequired,
 } from "shared/helpers";
-import { GenerateForm } from "shared/components/generate-form";
+import { GenerateForm } from "components/.";
 import { InputTypes } from "enums/input-types";
 
 export type SignInForm = {

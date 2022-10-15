@@ -21,6 +21,7 @@
       "types/*": ["shared/types/*"],
       "enums/*": ["shared/enums/*"],
       "helpers/*": ["shared/helpers/*"],
+      "hooks/*": ["shared/hooks/*"],
       "components/*": ["shared/components/*"],
       "sign-in/*": ["features/sign-in/*"],
       "sign-up/*": ["features/sign-up/*"]

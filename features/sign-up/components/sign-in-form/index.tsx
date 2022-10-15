@@ -1,9 +1,9 @@
-import { useHandleFormData } from "shared/hooks/use-handle-form-data";
+import { useHandleFormData } from "hooks/use-handle-form-data";
 import {
   capitalizeFirstLetter,
   generateMessageFieldIsRequired,
-} from "shared/helpers";
-import { GenerateForm } from "shared/components/generate-form";
+} from "helpers/.";
+import { GenerateForm } from "components/generate-form";
 import { InputTypes } from "enums/input-types";
 
 export type SignUpForm = {

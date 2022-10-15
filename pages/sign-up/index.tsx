@@ -1,10 +1,8 @@
-import { Header } from "components/header";
 import type { NextPage } from "next";
-import { Footer } from "components/footer";
 import { SignUpForm, PageHead } from "features/sign-up/components";
-import * as Styled from "../index.styled";
+import { Header, Footer, Hyperlink } from "components/.";
 import { Routes } from "enums/routes";
-import { Hyperlink } from "components/hyperlink";
+import * as Styled from "../index.styled";
 
 const Home: NextPage = () => {
   return (
