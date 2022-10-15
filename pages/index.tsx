@@ -2,7 +2,7 @@ import { Header } from "components/header";
 import type { NextPage } from "next";
 import Head from "next/head";
 
-import { SignUpForm, Footer } from "sign-up/components";
+import { SignInForm, Footer } from "features/sign-in/components";
 import * as Styled from "./index.styled";
 
 const Home: NextPage = () => {
@@ -15,7 +15,7 @@ const Home: NextPage = () => {
       </Head>
       <Styled.Main>
         <Header title="Sign in" />
-        <SignUpForm />
+        <SignInForm />
         <Footer />
       </Styled.Main>
     </Styled.Container>

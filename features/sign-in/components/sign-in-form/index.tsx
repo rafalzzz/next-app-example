@@ -6,12 +6,12 @@ import {
 import { GenerateForm } from "shared/components/generate-form";
 import { InputTypes } from "shared/enums/input-type";
 
-export type SignUpForm = {
+export type SignInForm = {
   login: string;
   password: string;
 };
 
-enum SignUpFormKeys {
+enum SignInFormKeys {
   LOGIN = "login",
   PASSWORD = "password",
 }
@@ -21,28 +21,28 @@ const SIGN_IN_BUTTON_VALUE = "Sign in";
 const SIGN_UP_FORM_FIELDS = [
   {
     type: InputTypes.TEXT,
-    key: SignUpFormKeys.LOGIN,
-    label: capitalizeFirstLetter(SignUpFormKeys.LOGIN),
+    key: SignInFormKeys.LOGIN,
+    label: capitalizeFirstLetter(SignInFormKeys.LOGIN),
     validationRules: {
-      required: generateMessageFieldIsRequired(SignUpFormKeys.LOGIN),
+      required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
     },
   },
   {
     type: InputTypes.PASSWORD,
-    key: SignUpFormKeys.PASSWORD,
-    label: capitalizeFirstLetter(SignUpFormKeys.PASSWORD),
+    key: SignInFormKeys.PASSWORD,
+    label: capitalizeFirstLetter(SignInFormKeys.PASSWORD),
     validationRules: {
-      required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
+      required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
     },
   },
 ];
 
-export const SignUpForm = () => {
-  const { extendedFormFields, handleSubmit } = useHandleFormData<SignUpForm>({
+export const SignInForm = () => {
+  const { extendedFormFields, handleSubmit } = useHandleFormData<SignInForm>({
     formFields: SIGN_UP_FORM_FIELDS,
   });
 
-  const onSubmit = (formData: SignUpForm) => console.log({ formData });
+  const onSubmit = (formData: SignInForm) => console.log({ formData });
 
   return (
     <GenerateForm
