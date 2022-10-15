@@ -1,4 +1,8 @@
 import { useHandleFormData } from "shared/hooks/use-handle-form-data";
+import {
+  capitalizeFirstLetter,
+  generateMessageFieldIsRequired,
+} from "shared/helpers";
 import { GenerateForm } from "shared/components/generate-form";
 import { InputTypes } from "shared/enums/input-type";
 
@@ -12,28 +16,23 @@ enum SignUpFormKeys {
   PASSWORD = "password",
 }
 
-enum SignUpFormLabels {
-  LOGIN = "Login",
-  PASSWORD = "Password",
-}
-
 const SIGN_IN_BUTTON_VALUE = "Sign in";
 
 const SIGN_UP_FORM_FIELDS = [
   {
     type: InputTypes.TEXT,
     key: SignUpFormKeys.LOGIN,
-    label: SignUpFormLabels.LOGIN,
+    label: capitalizeFirstLetter(SignUpFormKeys.LOGIN),
     validationRules: {
-      required: "Login is required",
+      required: generateMessageFieldIsRequired(SignUpFormKeys.LOGIN),
     },
   },
   {
     type: InputTypes.PASSWORD,
     key: SignUpFormKeys.PASSWORD,
-    label: SignUpFormLabels.PASSWORD,
+    label: capitalizeFirstLetter(SignUpFormKeys.PASSWORD),
     validationRules: {
-      required: "Password is required",
+      required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
     },
   },
 ];

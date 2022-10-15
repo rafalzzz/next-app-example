@@ -1,9 +1,8 @@
 import { FormEventHandler, useCallback } from "react";
-
+import { UseFormRegisterReturn } from "react-hook-form";
 import { TextField, PasswordField } from "components/form-fields";
 import { InputTypes } from "shared/enums/input-type";
 import * as Styled from "./index.styled";
-import { UseFormRegisterReturn } from "react-hook-form";
 
 export type ExtendedFormField = {
   type: InputTypes;
@@ -13,7 +12,7 @@ export type ExtendedFormField = {
   error?: string;
 };
 
-type GenerateFormInputsProps = {
+export type GenerateFormInputsProps = {
   formFields: ExtendedFormField[];
   buttonValue: string;
   handleSubmit: FormEventHandler<HTMLFormElement>;
