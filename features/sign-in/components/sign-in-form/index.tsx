@@ -3,8 +3,8 @@ import {
   capitalizeFirstLetter,
   generateMessageFieldIsRequired,
 } from "shared/helpers";
-import { GenerateForm } from "shared/components/generate-form";
-import { InputTypes } from "shared/enums/input-type";
+import { GenerateForm } from "components/.";
+import { InputTypes } from "enums/input-types";
 
 export type SignInForm = {
   login: string;
@@ -18,7 +18,7 @@ enum SignInFormKeys {
 
 const SIGN_IN_BUTTON_VALUE = "Sign in";
 
-const SIGN_UP_FORM_FIELDS = [
+const SIGN_IN_FORM_FIELDS = [
   {
     type: InputTypes.TEXT,
     key: SignInFormKeys.LOGIN,
@@ -34,12 +34,13 @@ const SIGN_UP_FORM_FIELDS = [
     validationRules: {
       required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
     },
+    showHyperlink: true,
   },
 ];
 
 export const SignInForm = () => {
   const { extendedFormFields, handleSubmit } = useHandleFormData<SignInForm>({
-    formFields: SIGN_UP_FORM_FIELDS,
+    formFields: SIGN_IN_FORM_FIELDS,
   });
 
   const onSubmit = (formData: SignInForm) => console.log({ formData });

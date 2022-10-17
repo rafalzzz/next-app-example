@@ -1,16 +1,9 @@
 import { useCallback } from "react";
-import { Path, RegisterOptions, useForm } from "react-hook-form";
-import { InputTypes } from "enums/input-type";
-
-type FormFields = {
-  type: InputTypes;
-  key: string;
-  label: string;
-  validationRules: RegisterOptions;
-};
+import { Path, useForm } from "react-hook-form";
+import { FormField } from "types/form-field";
 
 type useGenerateFormFieldsProps = {
-  formFields: FormFields[];
+  formFields: FormField[];
 };
 
 export const useHandleFormData = <FormType extends object>({
@@ -23,7 +16,7 @@ export const useHandleFormData = <FormType extends object>({
   } = useForm<FormType>();
 
   const transformFormFields = useCallback(
-    (formFieldsData: FormFields[]) =>
+    (formFieldsData: FormField[]) =>
       formFieldsData.map((formField) => ({
         ...formField,
         register: register(formField.key as Path<FormType>, {

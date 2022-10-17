@@ -1,5 +1,5 @@
 export enum Routes {
   LANDING_PAGE = "/",
-  REGISTRATION = "/register",
+  SIGN_UP = "/sign-up",
   FORGOT_PASSWORD = "/forgot-password",
 }
