@@ -1,6 +1,6 @@
 import { FormEventHandler, useCallback } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
-import { TextField, PasswordField } from "components/form-fields";
+import { TextField, PasswordField, NumberFieldWithMask } from "components/form-fields";
 import { InputTypes } from "enums/input-types";
 import * as Styled from "./index.styled";
 
@@ -31,6 +31,8 @@ export const GenerateForm = ({
         return <TextField key={key} {...{ formField }} />;
       case InputTypes.PASSWORD:
         return <PasswordField key={key} {...{ formField }} />;
+      case InputTypes.NUMBER_WITH_MASK:
+        return <NumberFieldWithMask key={key} {...{ formField }} />;
       default:
         break;
     }

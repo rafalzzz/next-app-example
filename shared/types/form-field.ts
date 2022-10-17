@@ -7,4 +7,7 @@ export type FormField = {
   label: string;
   validationRules: RegisterOptions;
   showHyperlink?: boolean;
+  format?: string;
+  allowEmptyFormatting?: boolean;
+  mask?: string | string[];
 };

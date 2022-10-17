@@ -1,8 +1,5 @@
 import { useHandleFormData } from "hooks/use-handle-form-data";
-import {
-  capitalizeFirstLetter,
-  generateMessageFieldIsRequired,
-} from "helpers/.";
+import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
 import { GenerateForm } from "components/generate-form";
 import { InputTypes } from "enums/input-types";
 
@@ -39,12 +36,15 @@ const SIGN_UP_FORM_FIELDS = [
     },
   },
   {
-    type: InputTypes.TEXT,
+    type: InputTypes.NUMBER_WITH_MASK,
     key: SignUpFormKeys.PHONE_NUMBER,
     label: capitalizeFirstLetter(SignUpFormKeys.PHONE_NUMBER),
     validationRules: {
       required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
     },
+    format: "+ 48 ### ### ###",
+    allowEmptyFormatting: true,
+    mask: "_",
   },
   {
     type: InputTypes.PASSWORD,
