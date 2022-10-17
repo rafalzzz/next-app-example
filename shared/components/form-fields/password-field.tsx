@@ -24,20 +24,13 @@ export const PasswordField = ({ formField }: PasswordFieldProps) => {
           width={250}
           {...register}
         />
-        <Styled.Button
-          type="button"
-          onClick={() => setShowPassword((prevState) => !prevState)}
-        >
+        <Styled.Button type="button" onClick={() => setShowPassword((prevState) => !prevState)}>
           {showPassword ? "Hide" : "Show"}
         </Styled.Button>
       </Styled.InputContainer>
       <Styled.Error marginBottom={10}>{error}</Styled.Error>
       {showHyperlink && (
-        <Hyperlink
-          url={Routes.FORGOT_PASSWORD}
-          text={"Forgot password?"}
-          fontSize={0.8}
-        />
+        <Hyperlink url={Routes.FORGOT_PASSWORD} text={"Forgot password?"} fontSize={0.8} />
       )}
     </Styled.Label>
   );

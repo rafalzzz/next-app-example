@@ -11,12 +11,18 @@ export const NumberFieldWithMask = ({ formField }: TextFieldProps) => {
   return (
     <Styled.Label key={key}>
       <Styled.InputName>{`${label}:`}</Styled.InputName>
-      <Styled.NumberInputWithMask
-        format={format ?? ""}
-        allowEmptyFormatting={allowEmptyFormatting}
-        mask={mask}
-        {...register}
-      />
+      <Styled.InputContainer>
+        <Styled.NumberInputWithMask
+          format={format ?? ""}
+          allowEmptyFormatting={allowEmptyFormatting}
+          mask={mask}
+          width={250}
+          {...register}
+        />
+        <Styled.Button type="button" onClick={() => console.log("show modal")}>
+          Verify
+        </Styled.Button>
+      </Styled.InputContainer>
       <Styled.Error>{error}</Styled.Error>
     </Styled.Label>
   );
