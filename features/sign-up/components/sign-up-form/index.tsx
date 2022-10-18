@@ -2,9 +2,11 @@ import { useHandleFormData } from "hooks/use-handle-form-data";
 import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
 import { GenerateForm } from "components/generate-form";
 import { InputTypes } from "enums/input-types";
+import { useAppDispatch } from "hooks/redux-hooks";
+import { handleModal } from "store/sign-up";
 
-export type SignUpForm = {
-  FIRST_NAME: string;
+export type SignUpFormType = {
+  firstName: string;
   password: string;
 };
 
@@ -18,7 +20,7 @@ enum SignUpFormKeys {
 
 const SIGN_UP_BUTTON_VALUE = "Sign up!";
 
-const SIGN_UP_FORM_FIELDS = [
+const SIGN_UP_FORM_FIELDS = (onClick: () => void) => [
   {
     type: InputTypes.TEXT,
     key: SignUpFormKeys.FIRST_NAME,
@@ -45,6 +47,7 @@ const SIGN_UP_FORM_FIELDS = [
     format: "+ 48 ### ### ###",
     allowEmptyFormatting: true,
     mask: "_",
+    onClick,
   },
   {
     type: InputTypes.PASSWORD,
@@ -65,11 +68,17 @@ const SIGN_UP_FORM_FIELDS = [
 ];
 
 export const SignUpForm = () => {
-  const { extendedFormFields, handleSubmit } = useHandleFormData<SignUpForm>({
-    formFields: SIGN_UP_FORM_FIELDS,
+  const dispatch = useAppDispatch();
+
+  const onClick = () => {
+    dispatch(handleModal(true));
+  };
+
+  const { extendedFormFields, handleSubmit } = useHandleFormData<SignUpFormType>({
+    formFields: SIGN_UP_FORM_FIELDS(onClick),
   });
 
-  const onSubmit = (formData: SignUpForm) => console.log({ formData });
+  const onSubmit = (formData: SignUpFormType) => console.log({ formData });
 
   return (
     <GenerateForm

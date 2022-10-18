@@ -6,7 +6,7 @@ type TextFieldProps = {
 };
 
 export const NumberFieldWithMask = ({ formField }: TextFieldProps) => {
-  const { key, label, register, error, format, allowEmptyFormatting, mask } = formField;
+  const { key, label, register, error, format, allowEmptyFormatting, mask, onClick } = formField;
 
   return (
     <Styled.Label key={key}>
@@ -19,7 +19,7 @@ export const NumberFieldWithMask = ({ formField }: TextFieldProps) => {
           width={250}
           {...register}
         />
-        <Styled.Button type="button" onClick={() => console.log("show modal")}>
+        <Styled.Button type="button" onClick={onClick}>
           Verify
         </Styled.Button>
       </Styled.InputContainer>

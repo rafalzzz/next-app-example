@@ -1,12 +1,9 @@
 import { useHandleFormData } from "shared/hooks/use-handle-form-data";
-import {
-  capitalizeFirstLetter,
-  generateMessageFieldIsRequired,
-} from "shared/helpers";
+import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "shared/helpers";
 import { GenerateForm } from "components/.";
 import { InputTypes } from "enums/input-types";
 
-export type SignInForm = {
+export type SignInFormType = {
   login: string;
   password: string;
 };
@@ -39,11 +36,11 @@ const SIGN_IN_FORM_FIELDS = [
 ];
 
 export const SignInForm = () => {
-  const { extendedFormFields, handleSubmit } = useHandleFormData<SignInForm>({
+  const { extendedFormFields, handleSubmit } = useHandleFormData<SignInFormType>({
     formFields: SIGN_IN_FORM_FIELDS,
   });
 
-  const onSubmit = (formData: SignInForm) => console.log({ formData });
+  const onSubmit = (formData: SignInFormType) => console.log({ formData });
 
   return (
     <GenerateForm
