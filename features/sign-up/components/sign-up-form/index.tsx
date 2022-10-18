@@ -1,5 +1,8 @@
 import { useHandleFormData } from "hooks/use-handle-form-data";
-import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
+import {
+  capitalizeFirstLetter,
+  generateMessageFieldIsRequired,
+} from "helpers/.";
 import { GenerateForm } from "components/generate-form";
 import { InputTypes } from "enums/input-types";
 import { useAppDispatch } from "hooks/redux-hooks";
@@ -74,15 +77,17 @@ export const SignUpForm = () => {
     dispatch(handleModal(true));
   };
 
-  const { extendedFormFields, handleSubmit } = useHandleFormData<SignUpFormType>({
-    formFields: SIGN_UP_FORM_FIELDS(onClick),
-  });
+  const { extendedFormFields, control, handleSubmit } =
+    useHandleFormData<SignUpFormType>({
+      formFields: SIGN_UP_FORM_FIELDS(onClick),
+    });
 
   const onSubmit = (formData: SignUpFormType) => console.log({ formData });
 
   return (
-    <GenerateForm
+    <GenerateForm<SignUpFormType>
       formFields={extendedFormFields}
+      control={control}
       buttonValue={SIGN_UP_BUTTON_VALUE}
       handleSubmit={handleSubmit(onSubmit)}
     />

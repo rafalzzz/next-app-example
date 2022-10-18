@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { Path, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FormField } from "types/form-field";
 
 type useGenerateFormFieldsProps = {
@@ -10,7 +10,7 @@ export const useHandleFormData = <FormType extends object>({
   formFields,
 }: useGenerateFormFieldsProps) => {
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormType>();
@@ -19,16 +19,14 @@ export const useHandleFormData = <FormType extends object>({
     (formFieldsData: FormField[]) =>
       formFieldsData.map((formField) => ({
         ...formField,
-        register: register(formField.key as Path<FormType>, {
-          ...formField.validationRules,
-        }),
         error: errors[formField.key as keyof FormType]?.message,
       })),
-    [errors, register]
+    [errors]
   );
 
   return {
     extendedFormFields: transformFormFields(formFields),
+    control,
     handleSubmit,
   };
 };

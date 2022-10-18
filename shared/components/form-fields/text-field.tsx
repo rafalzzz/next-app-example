@@ -1,18 +1,17 @@
 import { InputTypes } from "enums/input-types";
-import { ExtendedFormField } from "types/extended-form-field";
+import { FieldProps } from "types/field-props";
 import * as Styled from "./index.styled";
 
-type TextFieldProps = {
-  formField: ExtendedFormField;
-};
-
-export const TextField = ({ formField }: TextFieldProps) => {
-  const { key, label, register, error } = formField;
+export const TextField = <FormType extends object>({
+  formField,
+  fieldProps,
+}: FieldProps<FormType>) => {
+  const { key, label, error } = formField;
 
   return (
     <Styled.Label key={key}>
       <Styled.InputName>{`${label}:`}</Styled.InputName>
-      <Styled.Input type={InputTypes.TEXT} {...register} />
+      <Styled.Input type={InputTypes.TEXT} {...fieldProps} />
       <Styled.Error>{error}</Styled.Error>
     </Styled.Label>
   );
