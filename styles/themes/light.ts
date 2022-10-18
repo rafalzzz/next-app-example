@@ -9,4 +9,8 @@ export const light = {
     hyperlink: "#87CEFA",
     error: "#FF0000",
   },
+
+  text: {
+    primary: "#000",
+  },
 };
