@@ -1,4 +1,9 @@
-import React, { useState, useRef, ChangeEvent, KeyboardEvent } from "react";
+import React, {
+  useState,
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+} from "react";
 import * as Styled from "./index.styled";
 
 type InputCodeProps = {
@@ -7,61 +12,70 @@ type InputCodeProps = {
   onComplete: (code: string) => void;
 };
 
-//Logika do poprawy
+const INPUTS_ID_COMMON_PART = "input-code";
+
 export const InputCode = ({ length, loading, onComplete }: InputCodeProps) => {
-  const [code, setCode] = useState([...Array(length)].map(() => ""));
-  const inputs = useRef<HTMLInputElement[] | null>([]);
+  const [inputsValues, setInputValues] = useState(
+    [...Array(length)].map(() => "")
+  );
 
-  console.log({ code });
+  const changeInputFocus = (inputIndex: number) =>
+    document.getElementById(`${INPUTS_ID_COMMON_PART}-${inputIndex}`)?.focus();
 
-  const processInput = (event: ChangeEvent<HTMLInputElement>, slot: number) => {
-    console.log({ slot });
+  const processInput = useCallback(
+    (
+      { target: { value } }: ChangeEvent<HTMLInputElement>,
+      inputIndex: number
+    ) => {
+      if (/^\d+$/.test(value)) {
+        const currentInputValues = [...inputsValues];
+        currentInputValues[inputIndex] = value;
+        setInputValues(currentInputValues);
 
-    const num = event.target.value;
-    if (/[^0-9]/.test(num)) {
-      return;
-    }
-    const newCode = [...code];
-    newCode[slot] = num;
-    setCode(newCode);
-    console.log({ inputs: inputs.current });
-    inputs.current?.[slot + 1].focus();
-    if (newCode.every((num) => num !== "")) {
-      onComplete(newCode.join(""));
-    }
-  };
+        if (inputIndex !== length) {
+          const nextInputIndex = inputIndex + 1;
+          changeInputFocus(nextInputIndex);
+        }
 
-  const onKeyUp = (event: KeyboardEvent<HTMLInputElement>, slot: number) => {
-    if (event.code === "Backspace" && !code[slot] && slot !== 0) {
-      const newCode = [...code];
-      newCode[slot - 1] = "";
-      setCode(newCode);
-      if (inputs.current) {
-        inputs.current[slot - 1].focus();
+        const everyInputIsFilled = currentInputValues.every((digit) => digit);
+
+        if (everyInputIsFilled && onComplete) {
+          const code = currentInputValues.join("");
+          onComplete(code);
+        }
       }
-    }
-  };
+    },
+    [inputsValues, length, onComplete]
+  );
+
+  const onKeyUp = useCallback(
+    ({ code }: KeyboardEvent<HTMLInputElement>, inputIndex: number) => {
+      if (code === "Backspace") {
+        const currentInputValues = [...inputsValues];
+        currentInputValues[inputIndex] = "";
+        const prevInputIndex = inputIndex - 1;
+        setInputValues(currentInputValues);
+        changeInputFocus(prevInputIndex);
+      }
+    },
+    [inputsValues]
+  );
 
   return (
     <Styled.Container>
       <Styled.Inputs>
-        {code.map((num, idx) => {
+        {inputsValues.map((inputValue, index) => {
           return (
             <input
-              key={idx}
+              key={index}
+              id={`${INPUTS_ID_COMMON_PART}-${index}`}
               type="text"
               inputMode="numeric"
               maxLength={1}
-              value={num}
-              autoFocus={!code[0].length && idx === 0}
+              value={inputValue}
               readOnly={loading}
-              onChange={(event) => processInput(event, idx)}
-              onKeyUp={(event) => onKeyUp(event, idx)}
-              /* ref={(ref) => {
-                if (inputs.current?.[idx]) {
-                  inputs.current?.push(ref);
-                }
-              }} */
+              onChange={(event) => processInput(event, index)}
+              onKeyUp={(event) => onKeyUp(event, index)}
             />
           );
         })}

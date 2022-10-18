@@ -20,7 +20,8 @@ export const InputName = styled.span`
 export const Error = styled.div<{ marginBottom?: number }>`
   font-size: 0.7rem;
   color: ${(props) => props.theme.color.error};
-  margin-bottom: ${({ marginBottom }) => (marginBottom ? `${marginBottom}px` : 0)};
+  margin-bottom: ${({ marginBottom }) =>
+    marginBottom ? `${marginBottom}px` : 0};
 `;
 
 export const Input = styled.input<{ width?: number }>`
