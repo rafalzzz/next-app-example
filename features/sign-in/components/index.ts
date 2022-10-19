@@ -1,2 +1,2 @@
-export { PageHead } from "./head";
-export { SignInForm } from "./sign-in-form";
+export * from "./head";
+export * from "./sign-in-form";

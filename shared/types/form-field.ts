@@ -1,10 +1,16 @@
-import { InputTypes } from "enums/input-types";
-import { RegisterOptions } from "react-hook-form";
+import { Path, RegisterOptions } from "react-hook-form";
+import { InputTypes } from "enums/.";
 
-export type FormField = {
+export type FormField<FormType> = {
   type: InputTypes;
-  key: string;
+  key: Path<FormType>;
   label: string;
+  isValueIncorrect: boolean;
   validationRules: RegisterOptions;
+  error?: string;
   showHyperlink?: boolean;
+  format?: string;
+  allowEmptyFormatting?: boolean;
+  mask?: string | string[];
+  onClick?: () => void;
 };

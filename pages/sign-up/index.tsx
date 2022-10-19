@@ -1,7 +1,11 @@
 import type { NextPage } from "next";
-import { SignUpForm, PageHead } from "features/sign-up/components";
+import {
+  SignUpForm,
+  PageHead,
+  PhoneVerificationModal,
+} from "sign-up/components";
 import { Header, Footer, Hyperlink } from "components/.";
-import { Routes } from "enums/routes";
+import { Routes } from "enums/.";
 import * as Styled from "../index.styled";
 
 const Home: NextPage = () => {
@@ -16,6 +20,7 @@ const Home: NextPage = () => {
           child={<Hyperlink url={Routes.LANDING_PAGE} text="Sign in" />}
         />
       </Styled.Main>
+      <PhoneVerificationModal />
     </Styled.Container>
   );
 };

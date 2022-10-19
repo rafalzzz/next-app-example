@@ -18,11 +18,14 @@
     "paths": {
       "pages/*": ["pages/*"],
       "styles/*": ["styles/*"],
+      "api/*": ["api/*"],
+      "hooks/*": ["shared/hooks/*"],
+      "helpers/*": ["shared/helpers/*"],
+      "utils/*": ["shared/utils/*"],
+      "components/*": ["shared/components/*"],
       "types/*": ["shared/types/*"],
       "enums/*": ["shared/enums/*"],
-      "helpers/*": ["shared/helpers/*"],
-      "hooks/*": ["shared/hooks/*"],
-      "components/*": ["shared/components/*"],
+      "consts/*": ["shared/consts/*"],
       "sign-in/*": ["features/sign-in/*"],
       "sign-up/*": ["features/sign-up/*"]
     }

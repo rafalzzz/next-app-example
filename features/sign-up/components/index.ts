@@ -1,2 +1,3 @@
-export { PageHead } from "./head";
-export { SignUpForm } from "./sign-in-form";
+export * from "./head";
+export * from "./sign-up-form";
+export * from "./phone-verification-modal";

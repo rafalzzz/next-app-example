@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { PatternFormat } from "react-number-format";
 
 export const Label = styled.label`
   display: flex;
@@ -24,6 +25,18 @@ export const Error = styled.div<{ marginBottom?: number }>`
 `;
 
 export const Input = styled.input<{ width?: number }>`
+  padding: 10px;
+  width: ${({ width }) => (width ? `${width}px` : "300px")};
+  border: ${(props) => props.theme.border.normal};
+
+  :focus,
+  :hover {
+    outline: none;
+    border: ${(props) => props.theme.border.hover};
+  }
+`;
+
+export const NumberInputWithMask = styled(PatternFormat)<{ width?: number }>`
   padding: 10px;
   width: ${({ width }) => (width ? `${width}px` : "300px")};
   border: ${(props) => props.theme.border.normal};

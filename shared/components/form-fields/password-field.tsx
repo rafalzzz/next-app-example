@@ -1,19 +1,16 @@
 import { useState } from "react";
-
-import { Hyperlink } from "components/hyperlink";
-import { ExtendedFormField } from "types/extended-form-field";
-import { InputTypes } from "enums/input-types";
-import { Routes } from "enums/routes";
+import { Hyperlink } from "components/.";
+import { FieldProps } from "types/.";
+import { Routes, InputTypes } from "enums/.";
 import * as Styled from "./index.styled";
 
-type PasswordFieldProps = {
-  formField: ExtendedFormField;
-};
-
-export const PasswordField = ({ formField }: PasswordFieldProps) => {
+export const PasswordField = <FormType extends object>({
+  formField,
+  fieldProps,
+}: FieldProps<FormType>) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { key, label, register, error, showHyperlink } = formField;
+  const { key, label, error, isValueIncorrect, showHyperlink } = formField;
 
   return (
     <Styled.Label key={key}>
@@ -22,7 +19,7 @@ export const PasswordField = ({ formField }: PasswordFieldProps) => {
         <Styled.Input
           type={showPassword ? InputTypes.TEXT : InputTypes.PASSWORD}
           width={250}
-          {...register}
+          {...fieldProps}
         />
         <Styled.Button
           type="button"
@@ -31,7 +28,9 @@ export const PasswordField = ({ formField }: PasswordFieldProps) => {
           {showPassword ? "Hide" : "Show"}
         </Styled.Button>
       </Styled.InputContainer>
-      <Styled.Error marginBottom={10}>{error}</Styled.Error>
+      {isValueIncorrect && (
+        <Styled.Error marginBottom={10}>{error}</Styled.Error>
+      )}
       {showHyperlink && (
         <Hyperlink
           url={Routes.FORGOT_PASSWORD}

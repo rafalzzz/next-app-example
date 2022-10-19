@@ -1,55 +1,18 @@
-import { useHandleFormData } from "shared/hooks/use-handle-form-data";
-import {
-  capitalizeFirstLetter,
-  generateMessageFieldIsRequired,
-} from "shared/helpers";
+import { useSignInFormData } from "sign-in/hooks";
 import { GenerateForm } from "components/.";
-import { InputTypes } from "enums/input-types";
-
-export type SignInForm = {
-  login: string;
-  password: string;
-};
-
-enum SignInFormKeys {
-  LOGIN = "login",
-  PASSWORD = "password",
-}
+import { SignInFormType } from "sign-in/types";
 
 const SIGN_IN_BUTTON_VALUE = "Sign in";
 
-const SIGN_IN_FORM_FIELDS = [
-  {
-    type: InputTypes.TEXT,
-    key: SignInFormKeys.LOGIN,
-    label: capitalizeFirstLetter(SignInFormKeys.LOGIN),
-    validationRules: {
-      required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
-    },
-  },
-  {
-    type: InputTypes.PASSWORD,
-    key: SignInFormKeys.PASSWORD,
-    label: capitalizeFirstLetter(SignInFormKeys.PASSWORD),
-    validationRules: {
-      required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
-    },
-    showHyperlink: true,
-  },
-];
-
 export const SignInForm = () => {
-  const { extendedFormFields, handleSubmit } = useHandleFormData<SignInForm>({
-    formFields: SIGN_IN_FORM_FIELDS,
-  });
-
-  const onSubmit = (formData: SignInForm) => console.log({ formData });
+  const { control, formFields, onSubmit } = useSignInFormData();
 
   return (
-    <GenerateForm
-      formFields={extendedFormFields}
+    <GenerateForm<SignInFormType>
+      formFields={formFields}
+      control={control}
       buttonValue={SIGN_IN_BUTTON_VALUE}
-      handleSubmit={handleSubmit(onSubmit)}
+      handleSubmit={onSubmit}
     />
   );
 };

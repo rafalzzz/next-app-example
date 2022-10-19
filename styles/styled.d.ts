@@ -12,5 +12,9 @@ declare module "styled-components" {
       hyperlink: string;
       error: string;
     };
+
+    text: {
+      primary: string;
+    };
   }
 }
