@@ -1,4 +1,4 @@
-import { useHandleFormData } from "hooks/.";
+import { useForm } from "react-hook-form";
 import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
 import { GenerateForm } from "components/.";
 import { InputTypes } from "enums/.";
@@ -20,37 +20,40 @@ const DEFAULT_VALUES = {
 
 const SIGN_IN_BUTTON_VALUE = "Sign in";
 
-const SIGN_IN_FORM_FIELDS = [
-  {
-    type: InputTypes.TEXT,
-    key: SignInFormKeys.LOGIN,
-    label: capitalizeFirstLetter(SignInFormKeys.LOGIN),
-    validationRules: {
-      required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
-    },
-  },
-  {
-    type: InputTypes.PASSWORD,
-    key: SignInFormKeys.PASSWORD,
-    label: capitalizeFirstLetter(SignInFormKeys.PASSWORD),
-    validationRules: {
-      required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
-    },
-    showHyperlink: true,
-  },
-];
-
 export const SignInForm = () => {
-  const { extendedFormFields, control, handleSubmit } = useHandleFormData<SignInFormType>({
-    formFields: SIGN_IN_FORM_FIELDS,
-    defaultValues: DEFAULT_VALUES,
-  });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormType>({ defaultValues: DEFAULT_VALUES });
+
+  const FORM_FIELDS = [
+    {
+      type: InputTypes.TEXT,
+      key: SignInFormKeys.LOGIN,
+      label: capitalizeFirstLetter(SignInFormKeys.LOGIN),
+      error: errors[SignInFormKeys.LOGIN]?.message,
+      validationRules: {
+        required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
+      },
+    },
+    {
+      type: InputTypes.PASSWORD,
+      key: SignInFormKeys.PASSWORD,
+      label: capitalizeFirstLetter(SignInFormKeys.PASSWORD),
+      error: errors[SignInFormKeys.PASSWORD]?.message,
+      validationRules: {
+        required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
+      },
+      showHyperlink: true,
+    },
+  ];
 
   const onSubmit = (formData: SignInFormType) => console.log({ formData });
 
   return (
     <GenerateForm<SignInFormType>
-      formFields={extendedFormFields}
+      formFields={FORM_FIELDS}
       control={control}
       buttonValue={SIGN_IN_BUTTON_VALUE}
       handleSubmit={handleSubmit(onSubmit)}
