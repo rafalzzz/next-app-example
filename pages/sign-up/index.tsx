@@ -1,5 +1,9 @@
 import type { NextPage } from "next";
-import { SignUpForm, PageHead, PhoneVerificationModal } from "features/sign-up/components";
+import {
+  SignUpForm,
+  PageHead,
+  PhoneVerificationModal,
+} from "sign-up/components";
 import { Header, Footer, Hyperlink } from "components/.";
 import { Routes } from "enums/routes";
 import * as Styled from "../index.styled";

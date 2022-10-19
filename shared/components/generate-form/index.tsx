@@ -1,12 +1,22 @@
-import { FormEventHandler, ReactElement, useCallback } from "react";
-import { Control, Controller, ControllerRenderProps, Path } from "react-hook-form";
-import { TextField, PasswordField, NumberFieldWithMask } from "components/form-fields";
+import { FormEventHandler, useCallback } from "react";
+import {
+  Control,
+  Controller,
+  ControllerRenderProps,
+  Path,
+} from "react-hook-form";
+import {
+  TextField,
+  PasswordField,
+  NumberFieldWithMask,
+  Button,
+} from "components/.";
 import { FormField } from "types/.";
 import { InputTypes } from "enums/.";
 import * as Styled from "./index.styled";
 
 export type GenerateFormInputsProps<FormType extends object> = {
-  formFields: FormField[];
+  formFields: FormField<FormType>[];
   buttonValue: string;
   control: Control<FormType, keyof FormType>;
   handleSubmit: FormEventHandler<HTMLFormElement>;
@@ -19,18 +29,26 @@ export const GenerateForm = <FormType extends object>({
   handleSubmit,
 }: GenerateFormInputsProps<FormType>) => {
   const getFormField = useCallback(
-    (formField: FormField, fieldProps: ControllerRenderProps<FormType, Path<FormType>>) => {
+    (
+      formField: FormField<FormType>,
+      fieldProps: ControllerRenderProps<FormType, Path<FormType>>
+    ) => {
       const { type } = formField;
 
       switch (type) {
-        case InputTypes.TEXT:
-          return <TextField formField={formField} fieldProps={fieldProps} />;
         case InputTypes.PASSWORD:
-          return <PasswordField formField={formField} fieldProps={fieldProps} />;
+          return (
+            <PasswordField formField={formField} fieldProps={fieldProps} />
+          );
         case InputTypes.NUMBER_WITH_MASK:
-          return <NumberFieldWithMask formField={formField} fieldProps={fieldProps} />;
+          return (
+            <NumberFieldWithMask
+              formField={formField}
+              fieldProps={fieldProps}
+            />
+          );
         default:
-          break;
+          return <TextField formField={formField} fieldProps={fieldProps} />;
       }
     },
     []
@@ -41,15 +59,13 @@ export const GenerateForm = <FormType extends object>({
       {formFields.map((formField) => (
         <Controller
           key={formField.key}
-          name={formField.key as Path<FormType>}
+          name={formField.key}
           control={control}
           rules={formField.validationRules}
-          render={({ field }) => getFormField(formField, field) as ReactElement}
+          render={({ field }) => getFormField(formField, field)}
         />
       ))}
-      <Styled.Button type="submit" value="Submit">
-        {buttonValue}
-      </Styled.Button>
+      <Button text={buttonValue} type="submit" />
     </Styled.Form>
   );
 };

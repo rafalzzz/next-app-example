@@ -1,3 +1,3 @@
-export { TextField } from "./text-field";
-export { PasswordField } from "./password-field";
-export { NumberFieldWithMask } from "./number-field-with-mask";
+export * from "./text-field";
+export * from "./password-field";
+export * from "./number-field-with-mask";
