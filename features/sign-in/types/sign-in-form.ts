@@ -1,4 +1,4 @@
-import { SignInFormKeys } from "sign-in/enums/sign-in-form-keys";
+import { SignInFormKeys } from "sign-in/enums";
 
 export type SignInFormType = {
   [SignInFormKeys.LOGIN]: string;

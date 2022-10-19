@@ -1,6 +1,5 @@
 import type { BaseQueryFn } from "@reduxjs/toolkit/query";
-import type { AxiosError, AxiosRequestConfig } from "axios";
-import axios from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
 export const axiosBaseQuery =
   (
@@ -24,7 +23,10 @@ export const axiosBaseQuery =
         data,
         params,
         signal: abortController?.signal,
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         withCredentials: true,
       });
       return { data: result.data };

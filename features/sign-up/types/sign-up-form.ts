@@ -1,4 +1,4 @@
-import { SignUpFormKeys } from "sign-up/enums/sign-up-form-keys";
+import { SignUpFormKeys } from "sign-up/enums";
 
 export type SignUpFormType = {
   [SignUpFormKeys.FIRST_NAME]: string;

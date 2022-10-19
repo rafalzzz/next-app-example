@@ -5,7 +5,7 @@ import {
   PhoneVerificationModal,
 } from "sign-up/components";
 import { Header, Footer, Hyperlink } from "components/.";
-import { Routes } from "enums/routes";
+import { Routes } from "enums/.";
 import * as Styled from "../index.styled";
 
 const Home: NextPage = () => {

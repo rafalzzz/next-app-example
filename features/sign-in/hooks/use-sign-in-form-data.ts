@@ -3,9 +3,9 @@ import {
   capitalizeFirstLetter,
   generateMessageFieldIsRequired,
 } from "helpers/.";
+import { SignInFormType } from "sign-in/types";
 import { InputTypes } from "enums/.";
-import { SignInFormKeys } from "sign-in/enums/sign-in-form-keys";
-import { SignInFormType } from "sign-in/types/sign-in-form";
+import { SignInFormKeys } from "sign-in/enums";
 
 const DEFAULT_VALUES = {
   [SignInFormKeys.LOGIN]: "",

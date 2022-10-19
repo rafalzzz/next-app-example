@@ -6,9 +6,9 @@ import {
 } from "helpers/.";
 import { handleModal } from "store/sign-up";
 import * as C from "consts/validation";
-import { SignUpFormType } from "sign-up/types/sign-up-form";
+import { SignUpFormType } from "sign-up/types";
 import { Comparison, InputTypes } from "enums/.";
-import { SignUpFormKeys } from "sign-up/enums/sign-up-form-keys";
+import { SignUpFormKeys } from "sign-up/enums";
 
 const DEFAULT_VALUES = {
   [SignUpFormKeys.FIRST_NAME]: "",
