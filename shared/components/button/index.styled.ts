@@ -5,6 +5,8 @@ export const Button = styled.button<{ color: string }>`
   justify-content: center;
   align-items: center;
   background-color: ${({ color }) => color};
+  color: ${(props) => props.theme.color.primary};
+  font-weight: 300;
   min-width: 50px;
   padding: 10px;
   border-radius: 5px;
