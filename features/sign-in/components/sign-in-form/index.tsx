@@ -1,7 +1,7 @@
-import { useHandleFormData } from "shared/hooks/use-handle-form-data";
-import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "shared/helpers";
+import { useHandleFormData } from "hooks/.";
+import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
 import { GenerateForm } from "components/.";
-import { InputTypes } from "enums/input-types";
+import { InputTypes } from "enums/.";
 
 export type SignInFormType = {
   login: string;
@@ -12,6 +12,11 @@ enum SignInFormKeys {
   LOGIN = "login",
   PASSWORD = "password",
 }
+
+const DEFAULT_VALUES = {
+  [SignInFormKeys.LOGIN]: "",
+  [SignInFormKeys.PASSWORD]: "",
+};
 
 const SIGN_IN_BUTTON_VALUE = "Sign in";
 
@@ -36,15 +41,17 @@ const SIGN_IN_FORM_FIELDS = [
 ];
 
 export const SignInForm = () => {
-  const { extendedFormFields, handleSubmit } = useHandleFormData<SignInFormType>({
+  const { extendedFormFields, control, handleSubmit } = useHandleFormData<SignInFormType>({
     formFields: SIGN_IN_FORM_FIELDS,
+    defaultValues: DEFAULT_VALUES,
   });
 
   const onSubmit = (formData: SignInFormType) => console.log({ formData });
 
   return (
-    <GenerateForm
+    <GenerateForm<SignInFormType>
       formFields={extendedFormFields}
+      control={control}
       buttonValue={SIGN_IN_BUTTON_VALUE}
       handleSubmit={handleSubmit(onSubmit)}
     />

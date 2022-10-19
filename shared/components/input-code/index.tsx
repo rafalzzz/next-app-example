@@ -1,32 +1,22 @@
-import React, {
-  useState,
-  ChangeEvent,
-  KeyboardEvent,
-  useCallback,
-} from "react";
+import React, { useState, ChangeEvent, KeyboardEvent, useCallback } from "react";
 import * as Styled from "./index.styled";
 
 type InputCodeProps = {
   length: number;
-  loading: boolean;
+  loading?: boolean;
   onComplete: (code: string) => void;
 };
 
 const INPUTS_ID_COMMON_PART = "input-code";
 
-export const InputCode = ({ length, loading, onComplete }: InputCodeProps) => {
-  const [inputsValues, setInputValues] = useState(
-    [...Array(length)].map(() => "")
-  );
+export const InputCode = ({ length, loading = false, onComplete }: InputCodeProps) => {
+  const [inputsValues, setInputValues] = useState([...Array(length)].map(() => ""));
 
   const changeInputFocus = (inputIndex: number) =>
     document.getElementById(`${INPUTS_ID_COMMON_PART}-${inputIndex}`)?.focus();
 
   const processInput = useCallback(
-    (
-      { target: { value } }: ChangeEvent<HTMLInputElement>,
-      inputIndex: number
-    ) => {
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>, inputIndex: number) => {
       if (/^\d+$/.test(value)) {
         const currentInputValues = [...inputsValues];
         currentInputValues[inputIndex] = value;

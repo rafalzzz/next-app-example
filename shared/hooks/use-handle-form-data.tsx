@@ -1,19 +1,21 @@
 import { useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { FormField } from "types/form-field";
+import { DeepPartial, useForm } from "react-hook-form";
+import { FormField } from "types/.";
 
-type useGenerateFormFieldsProps = {
+type useGenerateFormFieldsProps<FormType> = {
   formFields: FormField[];
+  defaultValues: DeepPartial<FormType>;
 };
 
 export const useHandleFormData = <FormType extends object>({
   formFields,
-}: useGenerateFormFieldsProps) => {
+  defaultValues,
+}: useGenerateFormFieldsProps<FormType>) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormType>();
+  } = useForm<FormType>({ defaultValues });
 
   const transformFormFields = useCallback(
     (formFieldsData: FormField[]) =>

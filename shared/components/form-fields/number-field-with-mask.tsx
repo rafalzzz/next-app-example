@@ -1,12 +1,11 @@
-import { FieldProps } from "types/field-props";
+import { FieldProps } from "types/.";
 import * as Styled from "./index.styled";
 
 export const NumberFieldWithMask = <FormType extends object>({
   formField,
   fieldProps,
 }: FieldProps<FormType>) => {
-  const { key, label, error, format, allowEmptyFormatting, mask, onClick } =
-    formField;
+  const { key, label, error, format, allowEmptyFormatting, mask, onClick } = formField;
 
   const { onChange, name, value } = fieldProps;
 

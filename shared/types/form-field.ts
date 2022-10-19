@@ -1,5 +1,5 @@
-import { InputTypes } from "enums/input-types";
 import { RegisterOptions } from "react-hook-form";
+import { InputTypes } from "enums/input-types";
 
 export type FormField = {
   type: InputTypes;

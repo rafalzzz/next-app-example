@@ -1,8 +1,7 @@
-import { useAppDispatch, useAppSelector } from "hooks/redux-hooks";
+import { useAppDispatch, useAppSelector } from "hooks/.";
 import { handleModal, selectModal } from "store/sign-up";
-import { Modal } from "components/modal";
+import { Modal, InputCode } from "components/.";
 import * as Styled from "./index.styled";
-import { InputCode } from "components/input-code";
 
 export const PhoneVerificationModal = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +25,6 @@ export const PhoneVerificationModal = () => {
           <Styled.Text>Enter SMS code:</Styled.Text>
           <InputCode
             length={4}
-            loading={false}
             onComplete={(code) => {
               console.log({ code });
             }}

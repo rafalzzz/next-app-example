@@ -1,5 +1,5 @@
-import { InputTypes } from "enums/input-types";
-import { FieldProps } from "types/field-props";
+import { FieldProps } from "types/.";
+import { InputTypes } from "enums/.";
 import * as Styled from "./index.styled";
 
 export const TextField = <FormType extends object>({

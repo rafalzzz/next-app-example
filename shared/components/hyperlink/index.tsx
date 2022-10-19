@@ -1,6 +1,5 @@
 import Link from "next/link";
-
-import { Routes } from "enums/routes";
+import { Routes } from "enums/.";
 import * as Styled from "./index.styled";
 
 type HyperlinkProps = {
