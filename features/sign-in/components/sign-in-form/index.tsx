@@ -3,15 +3,15 @@ import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.
 import { GenerateForm } from "components/.";
 import { InputTypes } from "enums/.";
 
-export type SignInFormType = {
-  login: string;
-  password: string;
-};
-
 enum SignInFormKeys {
   LOGIN = "login",
   PASSWORD = "password",
 }
+
+export type SignInFormType = {
+  [SignInFormKeys.LOGIN]: string;
+  [SignInFormKeys.PASSWORD]: string;
+};
 
 const DEFAULT_VALUES = {
   [SignInFormKeys.LOGIN]: "",

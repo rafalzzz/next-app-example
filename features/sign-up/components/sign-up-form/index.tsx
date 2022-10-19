@@ -2,12 +2,13 @@ import { useAppDispatch, useHandleFormData } from "hooks/.";
 import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
 import { handleModal } from "store/sign-up";
 import { GenerateForm } from "components/.";
-import { InputTypes } from "enums/.";
-
-export type SignUpFormType = {
-  firstName: string;
-  password: string;
-};
+import {
+  FIRST_NAME_VALIDATION,
+  LAST_NAME_VALIDATION,
+  PASSWORD_VALIDATION,
+  STRING_INCLUDES_UNDERSCORE_SIGN,
+} from "consts/validation";
+import { Comparison, InputTypes } from "enums/.";
 
 enum SignUpFormKeys {
   FIRST_NAME = "first_name",
@@ -16,6 +17,14 @@ enum SignUpFormKeys {
   PASSWORD = "password",
   CONFIRM_PASSWORD = "confirm_password",
 }
+
+export type SignUpFormType = {
+  [SignUpFormKeys.FIRST_NAME]: string;
+  [SignUpFormKeys.LAST_NAME]: string;
+  [SignUpFormKeys.PHONE_NUMBER]: string;
+  [SignUpFormKeys.PASSWORD]: string;
+  [SignUpFormKeys.CONFIRM_PASSWORD]: string;
+};
 
 const DEFAULT_VALUES = {
   [SignUpFormKeys.FIRST_NAME]: "",
@@ -34,6 +43,10 @@ const SIGN_UP_FORM_FIELDS = (onClick: () => void) => [
     label: capitalizeFirstLetter(SignUpFormKeys.FIRST_NAME),
     validationRules: {
       required: generateMessageFieldIsRequired(SignUpFormKeys.FIRST_NAME),
+      pattern: {
+        value: FIRST_NAME_VALIDATION,
+        message: "Invalid first name",
+      },
     },
   },
   {
@@ -42,6 +55,10 @@ const SIGN_UP_FORM_FIELDS = (onClick: () => void) => [
     label: capitalizeFirstLetter(SignUpFormKeys.LAST_NAME),
     validationRules: {
       required: generateMessageFieldIsRequired(SignUpFormKeys.LAST_NAME),
+      pattern: {
+        value: LAST_NAME_VALIDATION,
+        message: "Invalid last name",
+      },
     },
   },
   {
@@ -50,6 +67,10 @@ const SIGN_UP_FORM_FIELDS = (onClick: () => void) => [
     label: capitalizeFirstLetter(SignUpFormKeys.PHONE_NUMBER),
     validationRules: {
       required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
+      pattern: {
+        value: STRING_INCLUDES_UNDERSCORE_SIGN,
+        message: "Enter correct phone number",
+      },
     },
     format: "+ 48 ### ### ###",
     allowEmptyFormatting: true,
@@ -62,12 +83,20 @@ const SIGN_UP_FORM_FIELDS = (onClick: () => void) => [
     label: capitalizeFirstLetter(SignUpFormKeys.PASSWORD),
     validationRules: {
       required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
+      pattern: {
+        value: PASSWORD_VALIDATION,
+        message: "Invalid password",
+      },
     },
   },
   {
     type: InputTypes.PASSWORD,
     key: SignUpFormKeys.CONFIRM_PASSWORD,
     label: capitalizeFirstLetter(SignUpFormKeys.CONFIRM_PASSWORD),
+    linkedFields: {
+      field: InputTypes.PASSWORD,
+      comparison: Comparison.EQUAL,
+    },
     validationRules: {
       required: generateMessageFieldIsRequired(SignUpFormKeys.CONFIRM_PASSWORD),
     },
