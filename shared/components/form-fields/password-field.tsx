@@ -10,7 +10,7 @@ export const PasswordField = <FormType extends object>({
 }: FieldProps<FormType>) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { key, label, error, showHyperlink } = formField;
+  const { key, label, error, isValueIncorrect, showHyperlink } = formField;
 
   return (
     <Styled.Label key={key}>
@@ -21,13 +21,22 @@ export const PasswordField = <FormType extends object>({
           width={250}
           {...fieldProps}
         />
-        <Styled.Button type="button" onClick={() => setShowPassword((prevState) => !prevState)}>
+        <Styled.Button
+          type="button"
+          onClick={() => setShowPassword((prevState) => !prevState)}
+        >
           {showPassword ? "Hide" : "Show"}
         </Styled.Button>
       </Styled.InputContainer>
-      <Styled.Error marginBottom={10}>{error}</Styled.Error>
+      {isValueIncorrect && (
+        <Styled.Error marginBottom={10}>{error}</Styled.Error>
+      )}
       {showHyperlink && (
-        <Hyperlink url={Routes.FORGOT_PASSWORD} text={"Forgot password?"} fontSize={0.8} />
+        <Hyperlink
+          url={Routes.FORGOT_PASSWORD}
+          text={"Forgot password?"}
+          fontSize={0.8}
+        />
       )}
     </Styled.Label>
   );

@@ -16,7 +16,12 @@ export const PhoneVerificationModal = () => {
   };
 
   return (
-    <Modal isOpen={modalIsOpened} onClose={onClose} onClick={onClick}>
+    <Modal
+      isOpen={modalIsOpened}
+      onClose={onClose}
+      onClick={onClick}
+      showConfirmButton={false}
+    >
       <>
         <header>
           <Styled.Title>Confirm your phone number</Styled.Title>

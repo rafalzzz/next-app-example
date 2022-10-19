@@ -37,6 +37,7 @@ export const useSignUpFormData = () => {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.FIRST_NAME,
       label: capitalizeFirstLetter(SignUpFormKeys.FIRST_NAME),
+      isValueIncorrect: !!errors[SignUpFormKeys.FIRST_NAME],
       error: errors[SignUpFormKeys.FIRST_NAME]?.message,
       validationRules: {
         required: generateMessageFieldIsRequired(SignUpFormKeys.FIRST_NAME),
@@ -50,6 +51,7 @@ export const useSignUpFormData = () => {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.LAST_NAME,
       label: capitalizeFirstLetter(SignUpFormKeys.LAST_NAME),
+      isValueIncorrect: !!errors[SignUpFormKeys.LAST_NAME],
       error: errors[SignUpFormKeys.LAST_NAME]?.message,
       validationRules: {
         required: generateMessageFieldIsRequired(SignUpFormKeys.LAST_NAME),
@@ -63,6 +65,7 @@ export const useSignUpFormData = () => {
       type: InputTypes.NUMBER_WITH_MASK,
       key: SignUpFormKeys.PHONE_NUMBER,
       label: capitalizeFirstLetter(SignUpFormKeys.PHONE_NUMBER),
+      isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
       error: errors[SignUpFormKeys.PHONE_NUMBER]?.message,
       validationRules: {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
@@ -80,6 +83,7 @@ export const useSignUpFormData = () => {
       type: InputTypes.PASSWORD,
       key: SignUpFormKeys.PASSWORD,
       label: capitalizeFirstLetter(SignUpFormKeys.PASSWORD),
+      isValueIncorrect: !!errors[SignUpFormKeys.PASSWORD],
       error: errors[SignUpFormKeys.PASSWORD]?.message,
       validationRules: {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
@@ -89,7 +93,8 @@ export const useSignUpFormData = () => {
       type: InputTypes.PASSWORD,
       key: SignUpFormKeys.CONFIRM_PASSWORD,
       label: capitalizeFirstLetter(SignUpFormKeys.CONFIRM_PASSWORD),
-      error: errors[SignUpFormKeys.CONFIRM_PASSWORD]?.message,
+      isValueIncorrect: !!errors[SignUpFormKeys.CONFIRM_PASSWORD],
+      error: "Passwords do not match",
       linkedFields: {
         field: InputTypes.PASSWORD,
         comparison: Comparison.EQUAL,

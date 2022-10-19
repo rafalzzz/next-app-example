@@ -8,9 +8,16 @@ type ModalProps = {
   children: JSX.Element;
   onClick: () => void;
   onClose: () => void;
+  showConfirmButton?: boolean;
 };
 
-export const Modal = ({ isOpen, children, onClick, onClose }: ModalProps) => {
+export const Modal = ({
+  isOpen,
+  children,
+  onClick,
+  onClose,
+  showConfirmButton = true,
+}: ModalProps) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -27,9 +34,11 @@ export const Modal = ({ isOpen, children, onClick, onClose }: ModalProps) => {
           <Styled.Content onClick={(e) => e.stopPropagation()}>
             {children}
             <Styled.ContentLine />
-            <Styled.ButtonsContainer>
+            <Styled.ButtonsContainer showConfirmButton>
               <Button onClick={onClose} text="Close" />
-              <Button onClick={onClick} color="green" text="Confirm" />
+              {showConfirmButton && (
+                <Button onClick={onClick} color="green" text="Confirm" />
+              )}
             </Styled.ButtonsContainer>
           </Styled.Content>
         </Styled.Container>,

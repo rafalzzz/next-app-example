@@ -24,6 +24,7 @@ export const useSignInFormData = () => {
       type: InputTypes.TEXT,
       key: SignInFormKeys.LOGIN,
       label: capitalizeFirstLetter(SignInFormKeys.LOGIN),
+      isValueIncorrect: !!errors[SignInFormKeys.LOGIN],
       error: errors[SignInFormKeys.LOGIN]?.message,
       validationRules: {
         required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
@@ -33,6 +34,7 @@ export const useSignInFormData = () => {
       type: InputTypes.PASSWORD,
       key: SignInFormKeys.PASSWORD,
       label: capitalizeFirstLetter(SignInFormKeys.PASSWORD),
+      isValueIncorrect: !!errors[SignInFormKeys.PASSWORD],
       error: errors[SignInFormKeys.PASSWORD]?.message,
       validationRules: {
         required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),

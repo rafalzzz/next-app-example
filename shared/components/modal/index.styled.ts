@@ -32,9 +32,10 @@ export const ContentLine = styled.hr`
   color: ${(props) => props.theme.border.normal};
 `;
 
-export const ButtonsContainer = styled.div`
+export const ButtonsContainer = styled.div<{ showConfirmButton: boolean }>`
   display: flex;
   width: 100%;
   align-items: center;
-  justify-content: space-between;
+  justify-content: ${({ showConfirmButton }) =>
+    showConfirmButton ? "space-between" : "flex-start"};
 `;

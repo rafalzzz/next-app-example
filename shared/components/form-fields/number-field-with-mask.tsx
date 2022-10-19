@@ -5,7 +5,16 @@ export const NumberFieldWithMask = <FormType extends object>({
   formField,
   fieldProps,
 }: FieldProps<FormType>) => {
-  const { key, label, error, format, allowEmptyFormatting, mask, onClick } = formField;
+  const {
+    key,
+    label,
+    error,
+    isValueIncorrect,
+    format,
+    allowEmptyFormatting,
+    mask,
+    onClick,
+  } = formField;
 
   const { onChange, name, value } = fieldProps;
 
@@ -26,7 +35,7 @@ export const NumberFieldWithMask = <FormType extends object>({
           Verify
         </Styled.Button>
       </Styled.InputContainer>
-      <Styled.Error>{error}</Styled.Error>
+      {isValueIncorrect && <Styled.Error>{error}</Styled.Error>}
     </Styled.Label>
   );
 };
