@@ -5,7 +5,7 @@ import {
   generateMessageFieldIsRequired,
 } from "helpers/.";
 import { handleModal } from "store/sign-up";
-import * as C from "consts/regex";
+import * as REGEX from "consts/regex";
 import { SignUpFormType } from "sign-up/types";
 import { Comparison, InputTypes } from "enums/.";
 import { SignUpFormKeys } from "sign-up/enums";
@@ -42,7 +42,7 @@ export const useSignUpFormData = () => {
       validationRules: {
         required: generateMessageFieldIsRequired(SignUpFormKeys.FIRST_NAME),
         pattern: {
-          value: C.FIRST_NAME_VALIDATION,
+          value: REGEX.FIRST_NAME_VALIDATION,
           message: "Invalid first name",
         },
       },
@@ -56,7 +56,7 @@ export const useSignUpFormData = () => {
       validationRules: {
         required: generateMessageFieldIsRequired(SignUpFormKeys.LAST_NAME),
         pattern: {
-          value: C.LAST_NAME_VALIDATION,
+          value: REGEX.LAST_NAME_VALIDATION,
           message: "Invalid last name",
         },
       },
@@ -70,7 +70,7 @@ export const useSignUpFormData = () => {
       validationRules: {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
         pattern: {
-          value: C.STRING_INCLUDES_UNDERSCORE_SIGN,
+          value: REGEX.STRING_INCLUDES_UNDERSCORE_SIGN,
           message: "Enter correct phone number",
         },
       },
