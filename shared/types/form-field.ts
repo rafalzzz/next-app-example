@@ -12,5 +12,6 @@ export type FormField<FormType> = {
   format?: string;
   allowEmptyFormatting?: boolean;
   mask?: string | string[];
+  buttonText?: string;
   onClick?: () => void;
 };
