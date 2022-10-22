@@ -5,7 +5,7 @@ import {
   generateMessageFieldIsRequired,
 } from "helpers/.";
 import { handleModal } from "store/sign-up";
-import * as C from "consts/validation";
+import * as C from "consts/regex";
 import { SignUpFormType } from "sign-up/types";
 import { Comparison, InputTypes } from "enums/.";
 import { SignUpFormKeys } from "sign-up/enums";

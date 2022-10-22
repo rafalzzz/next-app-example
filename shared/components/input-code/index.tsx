@@ -6,6 +6,7 @@ import React, {
 } from "react";
 import * as KEY from "consts/key-codes";
 import * as Styled from "./index.styled";
+import { DIGITS_ONLY } from "consts/regex";
 
 type InputCodeProps = {
   length: number;
@@ -40,7 +41,7 @@ export const InputCode = ({
   const onChange = useCallback(
     (inputIndex: number) =>
       ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-        if (/^\d+$/.test(value)) {
+        if (DIGITS_ONLY.test(value)) {
           const currentInputValues = [...inputsValues];
           const newValue = value.replace(currentInputValues[inputIndex], "");
           currentInputValues[inputIndex] = newValue;
@@ -67,14 +68,10 @@ export const InputCode = ({
         switch (code) {
           case KEY.BACKSPACE: {
             const currentInputValues = [...inputsValues];
-            if (currentInputValues[inputIndex]) {
-              currentInputValues[inputIndex] = "";
-              setInputValues(currentInputValues);
-              moveFocusToPrevInput(inputIndex);
-              break;
-            }
-
-            currentInputValues[inputIndex - 1] = "";
+            const index = currentInputValues[inputIndex]
+              ? inputIndex
+              : inputIndex - 1;
+            currentInputValues[index] = "";
             setInputValues(currentInputValues);
             moveFocusToPrevInput(inputIndex);
             break;
