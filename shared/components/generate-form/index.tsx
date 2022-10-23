@@ -1,4 +1,4 @@
-import { FormEventHandler, useCallback } from "react";
+import { FormEventHandler } from "react";
 import {
   TextField,
   PasswordField,
@@ -20,7 +20,7 @@ export const GenerateForm = <FormType extends object>({
   buttonValue,
   handleSubmit,
 }: GenerateFormInputsProps<FormType>) => {
-  const getFormField = useCallback((formField: FormField<FormType>) => {
+  const getFormField = (formField: FormField<FormType>) => {
     const { type, key } = formField;
 
     switch (type) {
@@ -31,7 +31,7 @@ export const GenerateForm = <FormType extends object>({
       default:
         return <TextField formField={formField} key={key} />;
     }
-  }, []);
+  };
 
   return (
     <Styled.Form onSubmit={handleSubmit}>

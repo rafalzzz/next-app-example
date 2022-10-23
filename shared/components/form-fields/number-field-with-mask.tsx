@@ -17,7 +17,7 @@ export const NumberFieldWithMask = <FormType extends object>({
     onClick,
   } = formField;
 
-  const { onChange, name, ref } = register;
+  const { name, onChange, ref } = register;
 
   return (
     <Styled.Label key={key}>
