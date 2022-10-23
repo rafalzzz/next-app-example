@@ -14,6 +14,7 @@ export const NumberFieldWithMask = <FormType extends object>({
     allowEmptyFormatting,
     mask,
     buttonText,
+    disabled,
     onClick,
   } = formField;
 
@@ -32,7 +33,7 @@ export const NumberFieldWithMask = <FormType extends object>({
           name={name}
           value={value}
         />
-        <Styled.Button type="button" onClick={onClick}>
+        <Styled.Button type="button" disabled={disabled} onClick={onClick}>
           {buttonText}
         </Styled.Button>
       </Styled.InputContainer>

@@ -1,14 +1,15 @@
 import { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "hooks/.";
+import { useAppSelector } from "hooks/.";
 import {
   capitalizeFirstLetter,
   generateMessageFieldIsRequired,
 } from "helpers/.";
-import { handleModal, selectNumberIsVerified } from "store/sign-up";
+import { selectSendVerificationCodeRequestState } from "store/sign-up";
+import { useSendVerificationCodeMutation } from "api/sign-up";
 import * as REGEX from "consts/regex";
 import { SignUpFormType } from "sign-up/types";
-import { Comparison, InputTypes } from "enums/.";
+import { Comparison, InputTypes, RequestState } from "enums/.";
 import { SignUpFormKeys } from "sign-up/enums";
 
 const DEFAULT_VALUES = {
@@ -19,21 +20,33 @@ const DEFAULT_VALUES = {
   [SignUpFormKeys.CONFIRM_PASSWORD]: "",
 };
 
+// Replace control with register
 export const useSignUpFormData = () => {
   const {
     control,
     watch,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<SignUpFormType>({ defaultValues: DEFAULT_VALUES });
 
-  const dispatch = useAppDispatch();
+  const [sendVerificationCode] = useSendVerificationCodeMutation();
 
-  const numberIsVerified = useAppSelector(selectNumberIsVerified);
+  const sendVerificationCodeRequestState = useAppSelector(
+    selectSendVerificationCodeRequestState
+  );
+
+  const phoneNumber = getValues(SignUpFormKeys.PHONE_NUMBER);
+  const phoneNumberIsNotFilled = phoneNumber.includes("_");
+
+  const phoneNumberButtonText =
+    sendVerificationCodeRequestState === RequestState.SUCCESS
+      ? "Verified"
+      : "Verify";
 
   const onClick = useCallback(() => {
-    dispatch(handleModal(true));
-  }, [dispatch]);
+    sendVerificationCode({ phoneNumber });
+  }, [phoneNumber, sendVerificationCode]);
 
   const FORM_FIELDS = useMemo(
     () => [
@@ -81,7 +94,8 @@ export const useSignUpFormData = () => {
         format: "+ 48 ### ### ###",
         allowEmptyFormatting: true,
         mask: "_",
-        buttonText: numberIsVerified ? "Verified" : "Verify",
+        buttonText: phoneNumberButtonText,
+        disabled: !phoneNumber || phoneNumberIsNotFilled,
         onClick,
       },
       {
@@ -112,7 +126,14 @@ export const useSignUpFormData = () => {
         },
       },
     ],
-    [errors, numberIsVerified, onClick, watch]
+    [
+      errors,
+      phoneNumber,
+      phoneNumberButtonText,
+      phoneNumberIsNotFilled,
+      onClick,
+      watch,
+    ]
   );
 
   const onSubmit = (formData: SignUpFormType) => console.log({ formData });
