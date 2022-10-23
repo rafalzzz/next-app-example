@@ -20,13 +20,13 @@ const DEFAULT_VALUES = {
   [SignUpFormKeys.CONFIRM_PASSWORD]: "",
 };
 
-// Replace control with register
 export const useSignUpFormData = () => {
   const {
-    control,
+    register,
     watch,
     handleSubmit,
     getValues,
+    trigger,
     formState: { errors },
   } = useForm<SignUpFormType>({ defaultValues: DEFAULT_VALUES });
 
@@ -37,16 +37,18 @@ export const useSignUpFormData = () => {
   );
 
   const phoneNumber = getValues(SignUpFormKeys.PHONE_NUMBER);
-  const phoneNumberIsNotFilled = phoneNumber.includes("_");
 
   const phoneNumberButtonText =
     sendVerificationCodeRequestState === RequestState.SUCCESS
       ? "Verified"
       : "Verify";
 
-  const onClick = useCallback(() => {
-    sendVerificationCode({ phoneNumber });
-  }, [phoneNumber, sendVerificationCode]);
+  const onClick = useCallback(async () => {
+    const result = await trigger(SignUpFormKeys.PHONE_NUMBER);
+    if (result) {
+      sendVerificationCode({ phoneNumber });
+    }
+  }, [phoneNumber, trigger, sendVerificationCode]);
 
   const FORM_FIELDS = useMemo(
     () => [
@@ -54,93 +56,86 @@ export const useSignUpFormData = () => {
         type: InputTypes.TEXT,
         key: SignUpFormKeys.FIRST_NAME,
         label: capitalizeFirstLetter(SignUpFormKeys.FIRST_NAME),
-        isValueIncorrect: !!errors[SignUpFormKeys.FIRST_NAME],
-        error: errors[SignUpFormKeys.FIRST_NAME]?.message,
-        validationRules: {
+        register: register(SignUpFormKeys.FIRST_NAME, {
           required: generateMessageFieldIsRequired(SignUpFormKeys.FIRST_NAME),
           pattern: {
             value: REGEX.FIRST_NAME_VALIDATION,
             message: "Invalid first name",
           },
-        },
+        }),
+        isValueIncorrect: !!errors[SignUpFormKeys.FIRST_NAME],
+        error: errors[SignUpFormKeys.FIRST_NAME]?.message,
       },
       {
         type: InputTypes.TEXT,
         key: SignUpFormKeys.LAST_NAME,
         label: capitalizeFirstLetter(SignUpFormKeys.LAST_NAME),
-        isValueIncorrect: !!errors[SignUpFormKeys.LAST_NAME],
-        error: errors[SignUpFormKeys.LAST_NAME]?.message,
-        validationRules: {
+        register: register(SignUpFormKeys.LAST_NAME, {
           required: generateMessageFieldIsRequired(SignUpFormKeys.LAST_NAME),
           pattern: {
             value: REGEX.LAST_NAME_VALIDATION,
             message: "Invalid last name",
           },
-        },
+        }),
+        isValueIncorrect: !!errors[SignUpFormKeys.LAST_NAME],
+        error: errors[SignUpFormKeys.LAST_NAME]?.message,
       },
       {
         type: InputTypes.NUMBER_WITH_MASK,
         key: SignUpFormKeys.PHONE_NUMBER,
         label: capitalizeFirstLetter(SignUpFormKeys.PHONE_NUMBER),
-        isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
-        error: errors[SignUpFormKeys.PHONE_NUMBER]?.message,
-        validationRules: {
+        register: register(SignUpFormKeys.PHONE_NUMBER, {
           required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
           pattern: {
             value: REGEX.STRING_INCLUDES_UNDERSCORE_SIGN,
             message: "Enter correct phone number",
           },
-        },
+        }),
+        isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
+        error: errors[SignUpFormKeys.PHONE_NUMBER]?.message,
         format: "+ 48 ### ### ###",
         allowEmptyFormatting: true,
         mask: "_",
         buttonText: phoneNumberButtonText,
-        disabled: !phoneNumber || phoneNumberIsNotFilled,
         onClick,
       },
       {
         type: InputTypes.PASSWORD,
         key: SignUpFormKeys.PASSWORD,
         label: capitalizeFirstLetter(SignUpFormKeys.PASSWORD),
+        register: register(SignUpFormKeys.PASSWORD, {
+          required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
+        }),
         isValueIncorrect: !!errors[SignUpFormKeys.PASSWORD],
         error: errors[SignUpFormKeys.PASSWORD]?.message,
-        validationRules: {
-          required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
-        },
       },
       {
         type: InputTypes.PASSWORD,
         key: SignUpFormKeys.CONFIRM_PASSWORD,
         label: capitalizeFirstLetter(SignUpFormKeys.CONFIRM_PASSWORD),
+        register: register(SignUpFormKeys.CONFIRM_PASSWORD, {
+          required: generateMessageFieldIsRequired(
+            SignUpFormKeys.CONFIRM_PASSWORD
+          ),
+          validate: (value: string) => value === watch(SignUpFormKeys.PASSWORD),
+        }),
         isValueIncorrect: !!errors[SignUpFormKeys.CONFIRM_PASSWORD],
         error: "Passwords do not match",
         linkedFields: {
           field: InputTypes.PASSWORD,
           comparison: Comparison.EQUAL,
         },
-        validationRules: {
-          required: generateMessageFieldIsRequired(
-            SignUpFormKeys.CONFIRM_PASSWORD
-          ),
-          validate: (value: string) => value === watch(SignUpFormKeys.PASSWORD),
-        },
       },
     ],
-    [
-      errors,
-      phoneNumber,
-      phoneNumberButtonText,
-      phoneNumberIsNotFilled,
-      onClick,
-      watch,
-    ]
+    [errors, phoneNumberButtonText, register, onClick, watch]
   );
 
-  const onSubmit = (formData: SignUpFormType) => console.log({ formData });
+  const onSubmit = (formData: SignUpFormType) => {
+    console.log({ formData });
+  };
 
   return {
     formFields: FORM_FIELDS,
-    control,
     onSubmit: handleSubmit(onSubmit),
   };
 };

@@ -6,11 +6,11 @@ import * as Styled from "./index.styled";
 
 export const PasswordField = <FormType extends object>({
   formField,
-  fieldProps,
 }: FieldProps<FormType>) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { key, label, error, isValueIncorrect, showHyperlink } = formField;
+  const { key, label, register, error, isValueIncorrect, showHyperlink } =
+    formField;
 
   return (
     <Styled.Label key={key}>
@@ -19,7 +19,7 @@ export const PasswordField = <FormType extends object>({
         <Styled.Input
           type={showPassword ? InputTypes.TEXT : InputTypes.PASSWORD}
           width={250}
-          {...fieldProps}
+          {...register}
         />
         <Styled.Button
           type="button"
