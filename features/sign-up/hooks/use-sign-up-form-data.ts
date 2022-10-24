@@ -1,13 +1,20 @@
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { useAppSelector } from "hooks/.";
+import { useAppDispatch, useAppSelector } from "hooks/.";
 import {
   capitalizeFirstLetter,
   generateMessageFieldIsRequired,
 } from "helpers/.";
-import { selectSendVerificationCodeRequestState } from "store/sign-up";
-import { useSendVerificationCodeMutation } from "api/sign-up";
+import {
+  selectSendVerificationCodeRequestState,
+  setPhoneNumber,
+} from "store/sign-up";
+import {
+  useSendVerificationCodeMutation,
+  useSignUpMutation,
+} from "api/sign-up";
 import * as REGEX from "consts/regex";
-import { SignUpFormType } from "sign-up/types";
+import { SignUpRequest } from "sign-up/types";
 import { Comparison, InputTypes, RequestState } from "enums/.";
 import { SignUpFormKeys } from "sign-up/enums";
 
@@ -24,28 +31,29 @@ export const useSignUpFormData = () => {
     register,
     handleSubmit,
     getValues,
-    trigger,
+    watch,
     formState: { errors },
-  } = useForm<SignUpFormType>({ defaultValues: DEFAULT_VALUES });
+  } = useForm<SignUpRequest>({ defaultValues: DEFAULT_VALUES });
+
+  const dispatch = useAppDispatch();
 
   const [sendVerificationCode] = useSendVerificationCodeMutation();
+  const [signUp] = useSignUpMutation();
 
   const sendVerificationCodeRequestState = useAppSelector(
     selectSendVerificationCodeRequestState
   );
 
-  const phoneNumberButtonText =
-    sendVerificationCodeRequestState === RequestState.SUCCESS
-      ? "Verified"
-      : "Verify";
+  const phoneNumber = watch(SignUpFormKeys.PHONE_NUMBER);
+  const phoneNumberIsFilled = phoneNumber.includes("_");
 
-  const onClick = async () => {
-    const result = await trigger(SignUpFormKeys.PHONE_NUMBER);
-    if (result) {
-      const phoneNumber = getValues(SignUpFormKeys.PHONE_NUMBER);
-      sendVerificationCode({ phoneNumber });
-    }
-  };
+  const phoneNumberIsVerified =
+    sendVerificationCodeRequestState === RequestState.SUCCESS;
+
+  const onClick = useCallback(() => {
+    dispatch(setPhoneNumber(phoneNumber));
+    sendVerificationCode({ [SignUpFormKeys.PHONE_NUMBER]: phoneNumber });
+  }, [phoneNumber, sendVerificationCode, dispatch]);
 
   const FORM_FIELDS = [
     {
@@ -92,7 +100,8 @@ export const useSignUpFormData = () => {
       format: "+ 48 ### ### ###",
       allowEmptyFormatting: true,
       mask: "_",
-      buttonText: phoneNumberButtonText,
+      disabled: !phoneNumber || phoneNumberIsFilled,
+      buttonText: phoneNumberIsVerified ? "Verified" : "Verify",
       onClick,
     },
     {
@@ -129,12 +138,13 @@ export const useSignUpFormData = () => {
     },
   ];
 
-  const onSubmit = (formData: SignUpFormType) => {
-    console.log({ formData });
+  const onSubmit = (formData: SignUpRequest) => {
+    signUp({ ...formData });
   };
 
   return {
     formFields: FORM_FIELDS,
+    disableSubmitButton: !phoneNumberIsVerified,
     onSubmit: handleSubmit(onSubmit),
   };
 };

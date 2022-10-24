@@ -13,12 +13,14 @@ export type GenerateFormInputsProps<FormType extends object> = {
   formFields: FormField<FormType>[];
   buttonValue: string;
   handleSubmit: FormEventHandler<HTMLFormElement>;
+  disableSubmitButton?: boolean;
 };
 
 export const GenerateForm = <FormType extends object>({
   formFields,
   buttonValue,
   handleSubmit,
+  disableSubmitButton,
 }: GenerateFormInputsProps<FormType>) => {
   const getFormField = (formField: FormField<FormType>) => {
     const { type, key } = formField;
@@ -36,7 +38,7 @@ export const GenerateForm = <FormType extends object>({
   return (
     <Styled.Form onSubmit={handleSubmit}>
       {formFields.map((formField) => getFormField(formField))}
-      <Button text={buttonValue} type="submit" />
+      <Button text={buttonValue} disabled={disableSubmitButton} type="submit" />
     </Styled.Form>
   );
 };

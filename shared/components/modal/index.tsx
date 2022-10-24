@@ -6,16 +6,16 @@ import * as Styled from "./index.styled";
 type ModalProps = {
   isOpen: boolean;
   children: JSX.Element;
-  onClick: () => void;
-  onClose: () => void;
+  onCancel: () => void;
   showConfirmButton?: boolean;
+  onClick?: () => void;
 };
 
 export const Modal = ({
   isOpen,
   children,
   onClick,
-  onClose,
+  onCancel,
   showConfirmButton = true,
 }: ModalProps) => {
   const [mounted, setMounted] = useState(false);
@@ -30,12 +30,12 @@ export const Modal = ({
 
   return mounted
     ? createPortal(
-        <Styled.Container isOpen={isOpen} onClick={onClose}>
+        <Styled.Container isOpen={isOpen} onClick={onCancel}>
           <Styled.Content onClick={(e) => e.stopPropagation()}>
             {children}
             <Styled.ContentLine />
             <Styled.ButtonsContainer showConfirmButton>
-              <Button onClick={onClose} text="Close" />
+              <Button onClick={onCancel} text="Close" />
               {showConfirmButton && (
                 <Button onClick={onClick} color="green" text="Confirm" />
               )}

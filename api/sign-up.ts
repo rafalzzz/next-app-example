@@ -1,28 +1,33 @@
 import { toast } from "react-toastify";
 import { api } from "./api";
 import { toggleModal } from "store/modal";
-import { setSendVerificationCodeRequestState } from "store/sign-up";
+import {
+  setSendVerificationCodeRequestState,
+  setSignUpRequestState,
+  setVerifyPhoneNumberRequestState,
+} from "store/sign-up";
+import {
+  SendVerificationCodeRequest,
+  SignUpRequest,
+  VerifyPhoneNumberRequest,
+} from "sign-up/types";
 import { RequestState } from "enums/.";
 
-type SendVerificationCodeResponse = {
+type SharedResponse = {
   message: string;
 };
 
 const signUpApi = api.injectEndpoints({
   endpoints: (build) => ({
     sendVerificationCode: build.mutation<
-      SendVerificationCodeResponse,
-      {
-        phoneNumber: string;
-      }
+      SharedResponse,
+      SendVerificationCodeRequest
     >({
       query(body) {
-        const { phoneNumber } = body;
-
         return {
           url: `/send-verifiaction-code`,
           method: "post",
-          data: { phone_number: phoneNumber },
+          data: { data: body },
         };
       },
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
@@ -33,46 +38,62 @@ const signUpApi = api.injectEndpoints({
           dispatch(toggleModal());
         } catch (err) {
           dispatch(setSendVerificationCodeRequestState(RequestState.ERROR));
-          toast.error("Something went wrong.");
+          toast.error("Something went wrong");
         }
       },
     }),
-    /* verifyPhoneNumber: build.mutation<
-      VerifyPhoneNumberResponse,
+    verifyPhoneNumber: build.mutation<SharedResponse, VerifyPhoneNumberRequest>(
       {
-        campaignId: string;
-        customerId: number;
-        data: HistoryLogTableDataWithoutChangedBy;
+        query(body) {
+          return {
+            url: `/v1/verify-phone-number`,
+            method: "post",
+            data: { data: body },
+          };
+        },
+        async onQueryStarted(id, { dispatch, queryFulfilled }) {
+          dispatch(setVerifyPhoneNumberRequestState(RequestState.LOADING));
+          try {
+            const {
+              data: { message },
+            } = await queryFulfilled;
+            dispatch(setVerifyPhoneNumberRequestState(RequestState.SUCCESS));
+            toast.success(message);
+          } catch (err) {
+            dispatch(setVerifyPhoneNumberRequestState(RequestState.ERROR));
+            toast.error("Something went wrong");
+          }
+        },
       }
-    >({
+    ),
+    signUp: build.mutation<SharedResponse, SignUpRequest>({
       query(body) {
-        const { campaignId, customerId, data } = body;
-
         return {
-          url: `/v1/history_log`,
+          url: `/v1/sign-up`,
           method: "post",
-          data: { data: [data] },
-          params: {
-            campaign_id: campaignId,
-            customer_id: customerId,
-          },
+          data: { data: body },
         };
       },
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        dispatch(setActionRequestState(RequestState.LOADING));
+        dispatch(setSignUpRequestState(RequestState.LOADING));
         try {
-          await queryFulfilled;
-          dispatch(setActionRequestState(RequestState.SUCCESS));
-          toast.success("Action successfully carried out");
+          const {
+            data: { message },
+          } = await queryFulfilled;
+          dispatch(setSignUpRequestState(RequestState.SUCCESS));
+          toast.success(message);
         } catch (err) {
-          dispatch(setActionRequestState(RequestState.ERROR));
-          toast.error("Action performed with error");
+          dispatch(setSignUpRequestState(RequestState.ERROR));
+          toast.error("Something went wrong");
         }
       },
-      invalidatesTags: [{ type: LogHistoryTags.ITEM, id: LogHistoryTags.LIST }],
-    }), */
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useSendVerificationCodeMutation } = signUpApi;
+export const {
+  useSendVerificationCodeMutation,
+  useVerifyPhoneNumberMutation,
+  useSignUpMutation,
+} = signUpApi;
