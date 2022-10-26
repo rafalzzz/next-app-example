@@ -11,18 +11,12 @@ import {
   SignUpRequest,
   VerifyPhoneNumberRequest,
 } from "sign-up/types";
+import { SharedResponse } from "types/response";
 import { RequestState } from "enums/.";
-
-type SharedResponse = {
-  message: string;
-};
 
 const signUpApi = api.injectEndpoints({
   endpoints: (build) => ({
-    sendVerificationCode: build.mutation<
-      SharedResponse,
-      SendVerificationCodeRequest
-    >({
+    sendVerificationCode: build.mutation<SharedResponse, SendVerificationCodeRequest>({
       query(body) {
         return {
           url: `/send-verifiaction-code`,
@@ -42,30 +36,28 @@ const signUpApi = api.injectEndpoints({
         }
       },
     }),
-    verifyPhoneNumber: build.mutation<SharedResponse, VerifyPhoneNumberRequest>(
-      {
-        query(body) {
-          return {
-            url: `/v1/verify-phone-number`,
-            method: "post",
-            data: { data: body },
-          };
-        },
-        async onQueryStarted(id, { dispatch, queryFulfilled }) {
-          dispatch(setVerifyPhoneNumberRequestState(RequestState.LOADING));
-          try {
-            const {
-              data: { message },
-            } = await queryFulfilled;
-            dispatch(setVerifyPhoneNumberRequestState(RequestState.SUCCESS));
-            toast.success(message);
-          } catch (err) {
-            dispatch(setVerifyPhoneNumberRequestState(RequestState.ERROR));
-            toast.error("Something went wrong");
-          }
-        },
-      }
-    ),
+    verifyPhoneNumber: build.mutation<SharedResponse, VerifyPhoneNumberRequest>({
+      query(body) {
+        return {
+          url: `/v1/verify-phone-number`,
+          method: "post",
+          data: { data: body },
+        };
+      },
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        dispatch(setVerifyPhoneNumberRequestState(RequestState.LOADING));
+        try {
+          const {
+            data: { message },
+          } = await queryFulfilled;
+          dispatch(setVerifyPhoneNumberRequestState(RequestState.SUCCESS));
+          toast.success(message);
+        } catch (err) {
+          dispatch(setVerifyPhoneNumberRequestState(RequestState.ERROR));
+          toast.error("Something went wrong");
+        }
+      },
+    }),
     signUp: build.mutation<SharedResponse, SignUpRequest>({
       query(body) {
         return {
@@ -92,8 +84,5 @@ const signUpApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const {
-  useSendVerificationCodeMutation,
-  useVerifyPhoneNumberMutation,
-  useSignUpMutation,
-} = signUpApi;
+export const { useSendVerificationCodeMutation, useVerifyPhoneNumberMutation, useSignUpMutation } =
+  signUpApi;

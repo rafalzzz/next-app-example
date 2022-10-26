@@ -1,11 +1,9 @@
 import { useForm } from "react-hook-form";
-import {
-  capitalizeFirstLetter,
-  generateMessageFieldIsRequired,
-} from "helpers/.";
-import { SignInFormType } from "sign-in/types";
-import { InputTypes } from "enums/.";
+import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
+import { useSignInMutation } from "api/sign-in";
+import { SignInRequest } from "sign-in/types";
 import { SignInFormKeys } from "sign-in/enums";
+import { InputTypes } from "enums/.";
 
 const DEFAULT_VALUES = {
   [SignInFormKeys.LOGIN]: "",
@@ -14,40 +12,43 @@ const DEFAULT_VALUES = {
 
 export const useSignInFormData = () => {
   const {
-    control,
+    register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInFormType>({ defaultValues: DEFAULT_VALUES });
+  } = useForm<SignInRequest>({ defaultValues: DEFAULT_VALUES });
+
+  const [signIn] = useSignInMutation();
 
   const FORM_FIELDS = [
     {
       type: InputTypes.TEXT,
       key: SignInFormKeys.LOGIN,
       label: capitalizeFirstLetter(SignInFormKeys.LOGIN),
+      register: register(SignInFormKeys.LOGIN, {
+        required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
+      }),
       isValueIncorrect: !!errors[SignInFormKeys.LOGIN],
       error: errors[SignInFormKeys.LOGIN]?.message,
-      validationRules: {
-        required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
-      },
     },
     {
       type: InputTypes.PASSWORD,
       key: SignInFormKeys.PASSWORD,
       label: capitalizeFirstLetter(SignInFormKeys.PASSWORD),
+      register: register(SignInFormKeys.PASSWORD, {
+        required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
+      }),
       isValueIncorrect: !!errors[SignInFormKeys.PASSWORD],
       error: errors[SignInFormKeys.PASSWORD]?.message,
-      validationRules: {
-        required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
-      },
       showHyperlink: true,
     },
   ];
 
-  const onSubmit = (formData: SignInFormType) => console.log({ formData });
+  const onSubmit = (formData: SignInRequest) => {
+    signIn(formData);
+  };
 
   return {
     formFields: FORM_FIELDS,
-    control,
     onSubmit: handleSubmit(onSubmit),
   };
 };

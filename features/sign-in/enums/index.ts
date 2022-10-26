@@ -1,1 +1,4 @@
-export * from "./sign-in-form-keys";
+export enum SignInFormKeys {
+  LOGIN = "login",
+  PASSWORD = "password",
+}

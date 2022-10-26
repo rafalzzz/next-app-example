@@ -1,16 +1,15 @@
 import { useSignInFormData } from "sign-in/hooks";
 import { GenerateForm } from "components/.";
-import { SignInFormType } from "sign-in/types";
+import { SignInRequest } from "sign-in/types/.";
 
 const SIGN_IN_BUTTON_VALUE = "Sign in";
 
 export const SignInForm = () => {
-  const { control, formFields, onSubmit } = useSignInFormData();
+  const { formFields, onSubmit } = useSignInFormData();
 
   return (
-    <GenerateForm<SignInFormType>
+    <GenerateForm<SignInRequest>
       formFields={formFields}
-      control={control}
       buttonValue={SIGN_IN_BUTTON_VALUE}
       handleSubmit={onSubmit}
     />
