@@ -1,12 +1,28 @@
 import { useCallback } from "react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+
 import { useAppDispatch, useAppSelector } from "hooks/.";
-import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
-import { selectSendVerificationCodeRequestState, setPhoneNumber } from "store/sign-up";
-import { useSendVerificationCodeMutation, useSignUpMutation } from "api/sign-up";
+import {
+  capitalizeFirstLetter,
+  displayErrorMessage,
+  generateMessageFieldIsRequired,
+} from "helpers/.";
+import {
+  selectSendVerificationCodeRequestState,
+  setPhoneNumber,
+  setSendVerificationCodeRequestState,
+  setSignUpRequestState,
+} from "store/sign-up";
+import { toggleModal } from "store/modal";
+import {
+  useSendVerificationCodeMutation,
+  useSignUpMutation,
+} from "api/sign-up";
 import * as REGEX from "consts/regex";
 import { SignUpRequest } from "sign-up/types";
-import { Comparison, InputTypes, RequestState } from "enums/.";
+import { Comparison, InputTypes, Paths, RequestState } from "enums/.";
 import { SignUpFormKeys } from "sign-up/enums";
 
 const DEFAULT_VALUES = {
@@ -27,20 +43,35 @@ export const useSignUpFormData = () => {
   } = useForm<SignUpRequest>({ defaultValues: DEFAULT_VALUES });
 
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const [sendVerificationCode] = useSendVerificationCodeMutation();
   const [signUp] = useSignUpMutation();
 
-  const sendVerificationCodeRequestState = useAppSelector(selectSendVerificationCodeRequestState);
+  const sendVerificationCodeRequestState = useAppSelector(
+    selectSendVerificationCodeRequestState
+  );
 
   const phoneNumber = watch(SignUpFormKeys.PHONE_NUMBER);
   const phoneNumberIsFilled = phoneNumber.includes("_");
 
-  const phoneNumberIsVerified = sendVerificationCodeRequestState === RequestState.SUCCESS;
+  const phoneNumberIsVerified =
+    sendVerificationCodeRequestState === RequestState.SUCCESS;
 
   const onClick = useCallback(() => {
     dispatch(setPhoneNumber(phoneNumber));
-    sendVerificationCode({ [SignUpFormKeys.PHONE_NUMBER]: phoneNumber });
+    dispatch(setSendVerificationCodeRequestState(RequestState.LOADING));
+    sendVerificationCode({ [SignUpFormKeys.PHONE_NUMBER]: phoneNumber })
+      .unwrap()
+      .then(({ message }) => {
+        dispatch(setSendVerificationCodeRequestState(RequestState.SUCCESS));
+        toast.success(message);
+        dispatch(toggleModal());
+      })
+      .catch((error) => {
+        displayErrorMessage(error);
+        dispatch(setSendVerificationCodeRequestState(RequestState.ERROR));
+      });
   }, [phoneNumber, sendVerificationCode, dispatch]);
 
   const FORM_FIELDS = [
@@ -107,7 +138,9 @@ export const useSignUpFormData = () => {
       key: SignUpFormKeys.CONFIRM_PASSWORD,
       label: capitalizeFirstLetter(SignUpFormKeys.CONFIRM_PASSWORD),
       register: register(SignUpFormKeys.CONFIRM_PASSWORD, {
-        required: generateMessageFieldIsRequired(SignUpFormKeys.CONFIRM_PASSWORD),
+        required: generateMessageFieldIsRequired(
+          SignUpFormKeys.CONFIRM_PASSWORD
+        ),
         validate: {
           matchesPreviousPassword: (value) => {
             const passwordValue = getValues(SignUpFormKeys.PASSWORD);
@@ -125,7 +158,18 @@ export const useSignUpFormData = () => {
   ];
 
   const onSubmit = (formData: SignUpRequest) => {
-    signUp(formData);
+    dispatch(setSignUpRequestState(RequestState.LOADING));
+    signUp(formData)
+      .unwrap()
+      .then(({ message }) => {
+        dispatch(setSignUpRequestState(RequestState.SUCCESS));
+        toast.success(message);
+        router.push(Paths.SIGN_IN);
+      })
+      .catch((error) => {
+        displayErrorMessage(error);
+        dispatch(setSignUpRequestState(RequestState.ERROR));
+      });
   };
 
   return {

@@ -1,9 +1,17 @@
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
-import { capitalizeFirstLetter, generateMessageFieldIsRequired } from "helpers/.";
+
+import {
+  capitalizeFirstLetter,
+  displayErrorMessage,
+  generateMessageFieldIsRequired,
+} from "helpers/.";
+import { setSignInRequestState } from "store/sign-in";
 import { useSignInMutation } from "api/sign-in";
 import { SignInRequest } from "sign-in/types";
 import { SignInFormKeys } from "sign-in/enums";
-import { InputTypes } from "enums/.";
+import { InputTypes, Paths, RequestState } from "enums/.";
 
 const DEFAULT_VALUES = {
   [SignInFormKeys.LOGIN]: "",
@@ -16,6 +24,9 @@ export const useSignInFormData = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<SignInRequest>({ defaultValues: DEFAULT_VALUES });
+
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const [signIn] = useSignInMutation();
 
@@ -43,8 +54,17 @@ export const useSignInFormData = () => {
     },
   ];
 
-  const onSubmit = (formData: SignInRequest) => {
-    signIn(formData);
+  const onSubmit = async (formData: SignInRequest) => {
+    dispatch(setSignInRequestState(RequestState.LOADING));
+    signIn(formData)
+      .then(() => {
+        dispatch(setSignInRequestState(RequestState.SUCCESS));
+        router.push(Paths.MAIN);
+      })
+      .catch((error) => {
+        displayErrorMessage(error);
+        dispatch(setSignInRequestState(RequestState.ERROR));
+      });
   };
 
   return {

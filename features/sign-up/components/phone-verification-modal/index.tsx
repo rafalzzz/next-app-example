@@ -1,15 +1,18 @@
 import { useCallback } from "react";
+import { displayErrorMessage } from "helpers/display-error-message";
 import { useAppDispatch, useAppSelector } from "hooks/.";
 import {
   handleModal,
   selectModal,
   selectPhoneNumber,
   selectVerifyPhoneNumberRequestState,
+  setVerifyPhoneNumberRequestState,
 } from "store/sign-up";
+import { toggleModal } from "store/modal";
 import { useVerifyPhoneNumberMutation } from "api/sign-up";
 import { Modal, InputCode } from "components/.";
-import * as Styled from "./index.styled";
 import { RequestState } from "enums/request-state";
+import * as Styled from "./index.styled";
 
 export const PhoneVerificationModal = () => {
   const dispatch = useAppDispatch();
@@ -33,9 +36,19 @@ export const PhoneVerificationModal = () => {
 
   const onCompleted = useCallback(
     (code: string) => {
-      verifyPhoneNumber({ code, phone_number: phoneNumber });
+      dispatch(setVerifyPhoneNumberRequestState(RequestState.LOADING));
+      verifyPhoneNumber({ code, phone_number: phoneNumber })
+        .unwrap()
+        .then(() => {
+          dispatch(setVerifyPhoneNumberRequestState(RequestState.SUCCESS));
+          dispatch(toggleModal());
+        })
+        .catch((error) => {
+          displayErrorMessage(error);
+          dispatch(setVerifyPhoneNumberRequestState(RequestState.ERROR));
+        });
     },
-    [phoneNumber, verifyPhoneNumber]
+    [dispatch, phoneNumber, verifyPhoneNumber]
   );
 
   return (
