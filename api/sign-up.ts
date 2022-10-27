@@ -1,4 +1,5 @@
 import { api } from "./api";
+import { REQUEST_URLS } from "consts/request-urls";
 import {
   SendVerificationCodeRequest,
   SignUpRequest,
@@ -14,7 +15,7 @@ const signUpApi = api.injectEndpoints({
     >({
       query(body) {
         return {
-          url: `/send-verifiaction-code`,
+          url: REQUEST_URLS.SEND_VERIFICATION_CODE,
           method: "post",
           data: { data: body },
         };
@@ -24,7 +25,7 @@ const signUpApi = api.injectEndpoints({
       {
         query(body) {
           return {
-            url: `/v1/verify-phone-number`,
+            url: REQUEST_URLS.VERIFY_PHONE_NUMBER,
             method: "post",
             data: { data: body },
           };
@@ -34,7 +35,7 @@ const signUpApi = api.injectEndpoints({
     signUp: build.mutation<SharedResponse, SignUpRequest>({
       query(body) {
         return {
-          url: `/v1/sign-up`,
+          url: REQUEST_URLS.SIGN_UP,
           method: "post",
           data: { data: body },
         };

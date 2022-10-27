@@ -1,4 +1,5 @@
 import { api } from "./api";
+import { REQUEST_URLS } from "consts/request-urls";
 import { SignInRequest } from "sign-in/types";
 import { SharedResponse } from "types/.";
 
@@ -7,7 +8,7 @@ const signInApi = api.injectEndpoints({
     signIn: build.mutation<SharedResponse, SignInRequest>({
       query(body) {
         return {
-          url: `/v1/sign-in`,
+          url: REQUEST_URLS.SIGN_IN,
           method: "post",
           data: { data: body },
         };
