@@ -1,10 +1,4 @@
-import { FormEventHandler, useCallback } from "react";
-import {
-  Control,
-  Controller,
-  ControllerRenderProps,
-  Path,
-} from "react-hook-form";
+import { FormEventHandler } from "react";
 import {
   TextField,
   PasswordField,
@@ -18,54 +12,33 @@ import * as Styled from "./index.styled";
 export type GenerateFormInputsProps<FormType extends object> = {
   formFields: FormField<FormType>[];
   buttonValue: string;
-  control: Control<FormType, keyof FormType>;
   handleSubmit: FormEventHandler<HTMLFormElement>;
+  disableSubmitButton?: boolean;
 };
 
 export const GenerateForm = <FormType extends object>({
   formFields,
   buttonValue,
-  control,
   handleSubmit,
+  disableSubmitButton,
 }: GenerateFormInputsProps<FormType>) => {
-  const getFormField = useCallback(
-    (
-      formField: FormField<FormType>,
-      fieldProps: ControllerRenderProps<FormType, Path<FormType>>
-    ) => {
-      const { type } = formField;
+  const getFormField = (formField: FormField<FormType>) => {
+    const { type, key } = formField;
 
-      switch (type) {
-        case InputTypes.PASSWORD:
-          return (
-            <PasswordField formField={formField} fieldProps={fieldProps} />
-          );
-        case InputTypes.NUMBER_WITH_MASK:
-          return (
-            <NumberFieldWithMask
-              formField={formField}
-              fieldProps={fieldProps}
-            />
-          );
-        default:
-          return <TextField formField={formField} fieldProps={fieldProps} />;
-      }
-    },
-    []
-  );
+    switch (type) {
+      case InputTypes.PASSWORD:
+        return <PasswordField formField={formField} key={key} />;
+      case InputTypes.NUMBER_WITH_MASK:
+        return <NumberFieldWithMask formField={formField} key={key} />;
+      default:
+        return <TextField formField={formField} key={key} />;
+    }
+  };
 
   return (
     <Styled.Form onSubmit={handleSubmit}>
-      {formFields.map((formField) => (
-        <Controller
-          key={formField.key}
-          name={formField.key}
-          control={control}
-          rules={formField.validationRules}
-          render={({ field }) => getFormField(formField, field)}
-        />
-      ))}
-      <Button text={buttonValue} type="submit" />
+      {formFields.map((formField) => getFormField(formField))}
+      <Button text={buttonValue} disabled={disableSubmitButton} type="submit" />
     </Styled.Form>
   );
 };

@@ -1,5 +1,6 @@
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import { ThemeProvider } from "styled-components";
 
 import { store } from "store";
@@ -11,6 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <ThemeProvider theme={light}>
         <GlobalStyle />
+        <ToastContainer />
         <Component {...pageProps} />
       </ThemeProvider>
     </Provider>

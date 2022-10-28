@@ -1,10 +1,14 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { FLUSH, PAUSE, PERSIST, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+import modal from "store/modal";
 import signUp from "store/sign-up";
-import { api } from "api";
+import signIn from "store/sign-in";
+import { api } from "api/api";
 
 const rootReducer = combineReducers({
+  modal,
   signUp,
+  signIn,
   [api.reducerPath]: api.reducer,
 });
 

@@ -1,11 +1,18 @@
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
+
 import {
   capitalizeFirstLetter,
+  displayErrorMessage,
   generateMessageFieldIsRequired,
+  removeUnderscore,
 } from "helpers/.";
-import { SignInFormType } from "sign-in/types";
-import { InputTypes } from "enums/.";
+import { setSignInRequestState } from "store/sign-in";
+import { useSignInMutation } from "api/sign-in";
+import { SignInRequest } from "sign-in/types";
 import { SignInFormKeys } from "sign-in/enums";
+import { InputTypes, Paths, RequestState } from "enums/.";
 
 const DEFAULT_VALUES = {
   [SignInFormKeys.LOGIN]: "",
@@ -14,40 +21,63 @@ const DEFAULT_VALUES = {
 
 export const useSignInFormData = () => {
   const {
-    control,
+    register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInFormType>({ defaultValues: DEFAULT_VALUES });
+  } = useForm<SignInRequest>({ defaultValues: DEFAULT_VALUES });
+
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const [signIn] = useSignInMutation();
 
   const FORM_FIELDS = [
     {
       type: InputTypes.TEXT,
       key: SignInFormKeys.LOGIN,
       label: capitalizeFirstLetter(SignInFormKeys.LOGIN),
+      placeholder: removeUnderscore(SignInFormKeys.LOGIN),
+      register: register(SignInFormKeys.LOGIN, {
+        required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
+      }),
       isValueIncorrect: !!errors[SignInFormKeys.LOGIN],
       error: errors[SignInFormKeys.LOGIN]?.message,
-      validationRules: {
-        required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
-      },
     },
     {
       type: InputTypes.PASSWORD,
       key: SignInFormKeys.PASSWORD,
       label: capitalizeFirstLetter(SignInFormKeys.PASSWORD),
+      placeholder: removeUnderscore(SignInFormKeys.PASSWORD),
+      register: register(SignInFormKeys.PASSWORD, {
+        required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
+      }),
       isValueIncorrect: !!errors[SignInFormKeys.PASSWORD],
       error: errors[SignInFormKeys.PASSWORD]?.message,
-      validationRules: {
-        required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
+      passwordFieldProps: {
+        showHyperlink: true,
       },
-      showHyperlink: true,
     },
   ];
 
-  const onSubmit = (formData: SignInFormType) => console.log({ formData });
+  const onSubmit = async (formData: SignInRequest) => {
+    dispatch(setSignInRequestState(RequestState.LOADING));
+    signIn(formData)
+      .unwrap()
+      .then(({ message }) => {
+        if (message) {
+          dispatch(setSignInRequestState(RequestState.SUCCESS));
+          router.push(Paths.MAIN);
+        }
+      })
+      .catch((error) => {
+        console.log({ error });
+        displayErrorMessage(error);
+        dispatch(setSignInRequestState(RequestState.ERROR));
+      });
+  };
 
   return {
     formFields: FORM_FIELDS,
-    control,
     onSubmit: handleSubmit(onSubmit),
   };
 };

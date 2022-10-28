@@ -1,22 +1,15 @@
-import { FieldProps } from "types/.";
+import { FieldProps, NumberFieldWithMaskProps } from "types/.";
 import * as Styled from "./index.styled";
 
 export const NumberFieldWithMask = <FormType extends object>({
   formField,
-  fieldProps,
 }: FieldProps<FormType>) => {
-  const {
-    key,
-    label,
-    error,
-    isValueIncorrect,
-    format,
-    allowEmptyFormatting,
-    mask,
-    onClick,
-  } = formField;
+  const { key, label, register, error, isValueIncorrect, numberFieldWithMaskProps } = formField;
 
-  const { onChange, name, value } = fieldProps;
+  const { format, allowEmptyFormatting, mask, buttonText, disabled, onClick } =
+    numberFieldWithMaskProps as NumberFieldWithMaskProps;
+
+  const { name, onChange, ref } = register;
 
   return (
     <Styled.Label key={key}>
@@ -29,10 +22,10 @@ export const NumberFieldWithMask = <FormType extends object>({
           width={250}
           onChange={onChange}
           name={name}
-          value={value}
+          getInputRef={ref}
         />
-        <Styled.Button type="button" onClick={onClick}>
-          Verify
+        <Styled.Button type="button" disabled={disabled} onClick={onClick}>
+          {buttonText}
         </Styled.Button>
       </Styled.InputContainer>
       {isValueIncorrect && <Styled.Error>{error}</Styled.Error>}

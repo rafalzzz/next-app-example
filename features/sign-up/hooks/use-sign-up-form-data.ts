@@ -1,13 +1,27 @@
+import { useCallback } from "react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { useAppDispatch } from "hooks/.";
+
+import { useAppDispatch, useAppSelector } from "hooks/.";
 import {
   capitalizeFirstLetter,
+  displayErrorMessage,
   generateMessageFieldIsRequired,
+  removeUnderscore,
 } from "helpers/.";
-import { handleModal } from "store/sign-up";
-import * as C from "consts/validation";
-import { SignUpFormType } from "sign-up/types";
-import { Comparison, InputTypes } from "enums/.";
+import {
+  selectSendVerificationCodeRequestState,
+  selectVerifyPhoneNumberRequestState,
+  setPhoneNumber,
+  setSendVerificationCodeRequestState,
+  setSignUpRequestState,
+} from "store/sign-up";
+import { toggleModal } from "store/modal";
+import { useSendVerificationCodeMutation, useSignUpMutation } from "api/sign-up";
+import * as REGEX from "consts/regex";
+import { SignUpRequest } from "sign-up/types";
+import { InputTypes, Paths, RequestState } from "enums/.";
 import { SignUpFormKeys } from "sign-up/enums";
 
 const DEFAULT_VALUES = {
@@ -20,99 +34,159 @@ const DEFAULT_VALUES = {
 
 export const useSignUpFormData = () => {
   const {
-    control,
-    watch,
+    register,
     handleSubmit,
+    getValues,
+    watch,
     formState: { errors },
-  } = useForm<SignUpFormType>({ defaultValues: DEFAULT_VALUES });
+  } = useForm<SignUpRequest>({ defaultValues: DEFAULT_VALUES });
 
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
-  const onClick = () => {
-    dispatch(handleModal(true));
-  };
+  const [sendVerificationCode] = useSendVerificationCodeMutation();
+  const [signUp] = useSignUpMutation();
+
+  const sendVerificationCodeRequestState = useAppSelector(selectSendVerificationCodeRequestState);
+  const verifyPhoneNumberRequestState = useAppSelector(selectVerifyPhoneNumberRequestState);
+
+  const sendVerificationCodeRequestIsLoading =
+    sendVerificationCodeRequestState === RequestState.LOADING;
+  const phoneNumberIsVerified = verifyPhoneNumberRequestState === RequestState.SUCCESS;
+
+  const buttonValueWhenRequestIsLoading = sendVerificationCodeRequestIsLoading
+    ? "Sending ..."
+    : "Verify";
+
+  const buttonText = phoneNumberIsVerified ? "Verified" : buttonValueWhenRequestIsLoading;
+
+  const phoneNumber = watch(SignUpFormKeys.PHONE_NUMBER);
+  const phoneNumberIsFilled = phoneNumber.includes("_");
+
+  const onClick = useCallback(() => {
+    dispatch(setPhoneNumber(phoneNumber));
+    dispatch(setSendVerificationCodeRequestState(RequestState.LOADING));
+    sendVerificationCode({ [SignUpFormKeys.PHONE_NUMBER]: phoneNumber })
+      .unwrap()
+      .then(({ message }) => {
+        dispatch(setSendVerificationCodeRequestState(RequestState.SUCCESS));
+        toast.success(message);
+        dispatch(toggleModal());
+      })
+      .catch((error) => {
+        displayErrorMessage(error);
+        dispatch(setSendVerificationCodeRequestState(RequestState.ERROR));
+      });
+  }, [phoneNumber, sendVerificationCode, dispatch]);
 
   const FORM_FIELDS = [
     {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.FIRST_NAME,
       label: capitalizeFirstLetter(SignUpFormKeys.FIRST_NAME),
-      isValueIncorrect: !!errors[SignUpFormKeys.FIRST_NAME],
-      error: errors[SignUpFormKeys.FIRST_NAME]?.message,
-      validationRules: {
+      placeholder: removeUnderscore(SignUpFormKeys.FIRST_NAME),
+      register: register(SignUpFormKeys.FIRST_NAME, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.FIRST_NAME),
         pattern: {
-          value: C.FIRST_NAME_VALIDATION,
+          value: REGEX.FIRST_NAME_VALIDATION,
           message: "Invalid first name",
         },
-      },
+      }),
+      isValueIncorrect: !!errors[SignUpFormKeys.FIRST_NAME],
+      error: errors[SignUpFormKeys.FIRST_NAME]?.message,
     },
     {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.LAST_NAME,
       label: capitalizeFirstLetter(SignUpFormKeys.LAST_NAME),
-      isValueIncorrect: !!errors[SignUpFormKeys.LAST_NAME],
-      error: errors[SignUpFormKeys.LAST_NAME]?.message,
-      validationRules: {
+      placeholder: removeUnderscore(SignUpFormKeys.LAST_NAME),
+      register: register(SignUpFormKeys.LAST_NAME, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.LAST_NAME),
         pattern: {
-          value: C.LAST_NAME_VALIDATION,
+          value: REGEX.LAST_NAME_VALIDATION,
           message: "Invalid last name",
         },
-      },
+      }),
+      isValueIncorrect: !!errors[SignUpFormKeys.LAST_NAME],
+      error: errors[SignUpFormKeys.LAST_NAME]?.message,
     },
     {
       type: InputTypes.NUMBER_WITH_MASK,
       key: SignUpFormKeys.PHONE_NUMBER,
       label: capitalizeFirstLetter(SignUpFormKeys.PHONE_NUMBER),
-      isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
-      error: errors[SignUpFormKeys.PHONE_NUMBER]?.message,
-      validationRules: {
+      placeholder: removeUnderscore(SignUpFormKeys.PHONE_NUMBER),
+      register: register(SignUpFormKeys.PHONE_NUMBER, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
         pattern: {
-          value: C.STRING_INCLUDES_UNDERSCORE_SIGN,
+          value: REGEX.STRING_INCLUDES_UNDERSCORE_SIGN,
           message: "Enter correct phone number",
         },
+      }),
+      isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
+      error: errors[SignUpFormKeys.PHONE_NUMBER]?.message,
+      numberFieldWithMaskProps: {
+        format: "+ 48 ### ### ###",
+        allowEmptyFormatting: true,
+        mask: "_",
+        disabled: !phoneNumber || phoneNumberIsFilled,
+        buttonText,
+        onClick,
       },
-      format: "+ 48 ### ### ###",
-      allowEmptyFormatting: true,
-      mask: "_",
-      onClick,
     },
     {
       type: InputTypes.PASSWORD,
       key: SignUpFormKeys.PASSWORD,
       label: capitalizeFirstLetter(SignUpFormKeys.PASSWORD),
+      placeholder: removeUnderscore(SignUpFormKeys.PASSWORD),
+      register: register(SignUpFormKeys.PASSWORD, {
+        required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
+      }),
       isValueIncorrect: !!errors[SignUpFormKeys.PASSWORD],
       error: errors[SignUpFormKeys.PASSWORD]?.message,
-      validationRules: {
-        required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
+      passwordFieldProps: {
+        showHyperlink: false,
       },
     },
     {
       type: InputTypes.PASSWORD,
       key: SignUpFormKeys.CONFIRM_PASSWORD,
       label: capitalizeFirstLetter(SignUpFormKeys.CONFIRM_PASSWORD),
+      placeholder: removeUnderscore(SignUpFormKeys.CONFIRM_PASSWORD),
+      register: register(SignUpFormKeys.CONFIRM_PASSWORD, {
+        required: generateMessageFieldIsRequired(SignUpFormKeys.CONFIRM_PASSWORD),
+        validate: {
+          matchesPreviousPassword: (value) => {
+            const passwordValue = getValues(SignUpFormKeys.PASSWORD);
+            return passwordValue === value || "Passwords do not match";
+          },
+        },
+      }),
+      error: errors[SignUpFormKeys.CONFIRM_PASSWORD]?.message,
       isValueIncorrect: !!errors[SignUpFormKeys.CONFIRM_PASSWORD],
-      error: "Passwords do not match",
-      linkedFields: {
-        field: InputTypes.PASSWORD,
-        comparison: Comparison.EQUAL,
-      },
-      validationRules: {
-        required: generateMessageFieldIsRequired(
-          SignUpFormKeys.CONFIRM_PASSWORD
-        ),
-        validate: (value: string) => value === watch(SignUpFormKeys.PASSWORD),
+      passwordFieldProps: {
+        showHyperlink: false,
       },
     },
   ];
 
-  const onSubmit = (formData: SignUpFormType) => console.log({ formData });
+  const onSubmit = (formData: SignUpRequest) => {
+    dispatch(setSignUpRequestState(RequestState.LOADING));
+    signUp(formData)
+      .unwrap()
+      .then(({ message }) => {
+        dispatch(setSignUpRequestState(RequestState.SUCCESS));
+        toast.success(message);
+        router.push(Paths.SIGN_IN);
+      })
+      .catch((error) => {
+        displayErrorMessage(error);
+        dispatch(setSignUpRequestState(RequestState.ERROR));
+      });
+  };
 
   return {
     formFields: FORM_FIELDS,
-    control,
+    disableSubmitButton: !phoneNumberIsVerified,
     onSubmit: handleSubmit(onSubmit),
   };
 };

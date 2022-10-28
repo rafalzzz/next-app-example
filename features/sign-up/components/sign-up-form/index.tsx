@@ -1,17 +1,17 @@
 import { useSignUpFormData } from "sign-up/hooks";
 import { GenerateForm } from "components/.";
-import { SignUpFormType } from "sign-up/types";
+import { SignUpRequest } from "sign-up/types";
 
 const SIGN_UP_BUTTON_VALUE = "Sign up!";
 
 export const SignUpForm = () => {
-  const { control, formFields, onSubmit } = useSignUpFormData();
+  const { formFields, disableSubmitButton, onSubmit } = useSignUpFormData();
 
   return (
-    <GenerateForm<SignUpFormType>
+    <GenerateForm<SignUpRequest>
       formFields={formFields}
-      control={control}
       buttonValue={SIGN_UP_BUTTON_VALUE}
+      disableSubmitButton={disableSubmitButton}
       handleSubmit={onSubmit}
     />
   );

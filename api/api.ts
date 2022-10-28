@@ -4,7 +4,7 @@ import { axiosBaseQuery } from "utils/axios-base-query";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: axiosBaseQuery({
-    baseUrl: `${process.env.API_URL}/api`,
+    baseUrl: `${process.env.API_URL}`,
   }),
   tagTypes: [],
   endpoints: () => ({}),

@@ -1,5 +1,12 @@
-import React, { useState, ChangeEvent, KeyboardEvent, useCallback } from "react";
+import React, {
+  useState,
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+} from "react";
+import * as KEY from "consts/key-codes";
 import * as Styled from "./index.styled";
+import { DIGITS_ONLY } from "consts/regex";
 
 type InputCodeProps = {
   length: number;
@@ -9,46 +16,79 @@ type InputCodeProps = {
 
 const INPUTS_ID_COMMON_PART = "input-code";
 
-export const InputCode = ({ length, loading = false, onComplete }: InputCodeProps) => {
-  const [inputsValues, setInputValues] = useState([...Array(length)].map(() => ""));
+export const InputCode = ({
+  length,
+  loading = false,
+  onComplete,
+}: InputCodeProps) => {
+  const [inputsValues, setInputValues] = useState(
+    [...Array(length)].map(() => "")
+  );
 
   const changeInputFocus = (inputIndex: number) =>
     document.getElementById(`${INPUTS_ID_COMMON_PART}-${inputIndex}`)?.focus();
 
-  const processInput = useCallback(
-    ({ target: { value } }: ChangeEvent<HTMLInputElement>, inputIndex: number) => {
-      if (/^\d+$/.test(value)) {
-        const currentInputValues = [...inputsValues];
-        currentInputValues[inputIndex] = value;
-        setInputValues(currentInputValues);
-
-        if (inputIndex !== length) {
-          const nextInputIndex = inputIndex + 1;
-          changeInputFocus(nextInputIndex);
-        }
-
-        const everyInputIsFilled = currentInputValues.every((digit) => digit);
-
-        if (everyInputIsFilled && onComplete) {
-          const code = currentInputValues.join("");
-          onComplete(code);
-        }
-      }
-    },
-    [inputsValues, length, onComplete]
+  const moveFocusToNextInput = useCallback(
+    (inputIndex: number) => changeInputFocus(inputIndex + 1),
+    []
   );
 
-  const onKeyUp = useCallback(
-    ({ code }: KeyboardEvent<HTMLInputElement>, inputIndex: number) => {
-      if (code === "Backspace") {
-        const currentInputValues = [...inputsValues];
-        currentInputValues[inputIndex] = "";
-        const prevInputIndex = inputIndex - 1;
-        setInputValues(currentInputValues);
-        changeInputFocus(prevInputIndex);
-      }
-    },
-    [inputsValues]
+  const moveFocusToPrevInput = useCallback(
+    (inputIndex: number) => changeInputFocus(inputIndex - 1),
+    []
+  );
+
+  const onChange = useCallback(
+    (inputIndex: number) =>
+      ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+        if (DIGITS_ONLY.test(value)) {
+          const currentInputValues = [...inputsValues];
+          const newValue = value.replace(currentInputValues[inputIndex], "");
+          currentInputValues[inputIndex] = newValue;
+          setInputValues(currentInputValues);
+
+          if (inputIndex !== length) {
+            moveFocusToNextInput(inputIndex);
+          }
+
+          const everyInputIsFilled = currentInputValues.every((digit) => digit);
+
+          if (everyInputIsFilled && onComplete) {
+            const code = currentInputValues.join("");
+            onComplete(code);
+          }
+        }
+      },
+    [inputsValues, length, moveFocusToNextInput, onComplete]
+  );
+
+  const onKeyDown = useCallback(
+    (inputIndex: number) =>
+      ({ code }: KeyboardEvent<HTMLInputElement>) => {
+        switch (code) {
+          case KEY.BACKSPACE: {
+            const currentInputValues = [...inputsValues];
+            const index = currentInputValues[inputIndex]
+              ? inputIndex
+              : inputIndex - 1;
+            currentInputValues[index] = "";
+            setInputValues(currentInputValues);
+            moveFocusToPrevInput(inputIndex);
+            break;
+          }
+          case KEY.ARROW_RIGHT: {
+            moveFocusToNextInput(inputIndex);
+            break;
+          }
+          case KEY.ARROW_LEFT: {
+            moveFocusToPrevInput(inputIndex);
+            break;
+          }
+          default:
+            break;
+        }
+      },
+    [inputsValues, moveFocusToNextInput, moveFocusToPrevInput]
   );
 
   return (
@@ -61,11 +101,11 @@ export const InputCode = ({ length, loading = false, onComplete }: InputCodeProp
               id={`${INPUTS_ID_COMMON_PART}-${index}`}
               type="text"
               inputMode="numeric"
-              maxLength={1}
+              maxLength={2}
               value={inputValue}
               readOnly={loading}
-              onChange={(event) => processInput(event, index)}
-              onKeyUp={(event) => onKeyUp(event, index)}
+              onChange={onChange(index)}
+              onKeyDown={onKeyDown(index)}
             />
           );
         })}
