@@ -6,6 +6,6 @@ export const displayErrorMessage = (error: unknown) => {
     const { message } = error.response.data;
     toast.error(message);
   } else {
-    toast.error(String(error));
+    toast.error("Something went wrong");
   }
 };

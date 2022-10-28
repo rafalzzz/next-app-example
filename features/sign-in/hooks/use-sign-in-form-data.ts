@@ -6,6 +6,7 @@ import {
   capitalizeFirstLetter,
   displayErrorMessage,
   generateMessageFieldIsRequired,
+  removeUnderscore,
 } from "helpers/.";
 import { setSignInRequestState } from "store/sign-in";
 import { useSignInMutation } from "api/sign-in";
@@ -35,6 +36,7 @@ export const useSignInFormData = () => {
       type: InputTypes.TEXT,
       key: SignInFormKeys.LOGIN,
       label: capitalizeFirstLetter(SignInFormKeys.LOGIN),
+      placeholder: removeUnderscore(SignInFormKeys.LOGIN),
       register: register(SignInFormKeys.LOGIN, {
         required: generateMessageFieldIsRequired(SignInFormKeys.LOGIN),
       }),
@@ -45,23 +47,30 @@ export const useSignInFormData = () => {
       type: InputTypes.PASSWORD,
       key: SignInFormKeys.PASSWORD,
       label: capitalizeFirstLetter(SignInFormKeys.PASSWORD),
+      placeholder: removeUnderscore(SignInFormKeys.PASSWORD),
       register: register(SignInFormKeys.PASSWORD, {
         required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
       }),
       isValueIncorrect: !!errors[SignInFormKeys.PASSWORD],
       error: errors[SignInFormKeys.PASSWORD]?.message,
-      showHyperlink: true,
+      passwordFieldProps: {
+        showHyperlink: true,
+      },
     },
   ];
 
   const onSubmit = async (formData: SignInRequest) => {
     dispatch(setSignInRequestState(RequestState.LOADING));
     signIn(formData)
-      .then(() => {
-        dispatch(setSignInRequestState(RequestState.SUCCESS));
-        router.push(Paths.MAIN);
+      .unwrap()
+      .then(({ message }) => {
+        if (message) {
+          dispatch(setSignInRequestState(RequestState.SUCCESS));
+          router.push(Paths.MAIN);
+        }
       })
       .catch((error) => {
+        console.log({ error });
         displayErrorMessage(error);
         dispatch(setSignInRequestState(RequestState.ERROR));
       });

@@ -21,12 +21,9 @@ export const PhoneVerificationModal = () => {
   const [verifyPhoneNumber] = useVerifyPhoneNumberMutation();
 
   const phoneNumber = useAppSelector(selectPhoneNumber);
-  const verifyPhoneNumberRequestState = useAppSelector(
-    selectVerifyPhoneNumberRequestState
-  );
+  const verifyPhoneNumberRequestState = useAppSelector(selectVerifyPhoneNumberRequestState);
 
-  const requestIsNotPending =
-    verifyPhoneNumberRequestState === RequestState.LOADING;
+  const requestIsNotPending = verifyPhoneNumberRequestState === RequestState.LOADING;
 
   const onCancel = useCallback(() => {
     if (!requestIsNotPending) {
@@ -39,9 +36,11 @@ export const PhoneVerificationModal = () => {
       dispatch(setVerifyPhoneNumberRequestState(RequestState.LOADING));
       verifyPhoneNumber({ code, phone_number: phoneNumber })
         .unwrap()
-        .then(() => {
-          dispatch(setVerifyPhoneNumberRequestState(RequestState.SUCCESS));
-          dispatch(toggleModal());
+        .then(({ message }) => {
+          if (message) {
+            dispatch(setVerifyPhoneNumberRequestState(RequestState.SUCCESS));
+            dispatch(toggleModal());
+          }
         })
         .catch((error) => {
           displayErrorMessage(error);
@@ -60,6 +59,7 @@ export const PhoneVerificationModal = () => {
         <Styled.Main>
           <Styled.Text>Enter SMS code:</Styled.Text>
           <InputCode length={4} onComplete={onCompleted} />
+          {requestIsNotPending && <span>Loading ...</span>}
         </Styled.Main>
       </>
     </Modal>

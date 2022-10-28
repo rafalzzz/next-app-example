@@ -8,21 +8,20 @@ import {
   capitalizeFirstLetter,
   displayErrorMessage,
   generateMessageFieldIsRequired,
+  removeUnderscore,
 } from "helpers/.";
 import {
   selectSendVerificationCodeRequestState,
+  selectVerifyPhoneNumberRequestState,
   setPhoneNumber,
   setSendVerificationCodeRequestState,
   setSignUpRequestState,
 } from "store/sign-up";
 import { toggleModal } from "store/modal";
-import {
-  useSendVerificationCodeMutation,
-  useSignUpMutation,
-} from "api/sign-up";
+import { useSendVerificationCodeMutation, useSignUpMutation } from "api/sign-up";
 import * as REGEX from "consts/regex";
 import { SignUpRequest } from "sign-up/types";
-import { Comparison, InputTypes, Paths, RequestState } from "enums/.";
+import { InputTypes, Paths, RequestState } from "enums/.";
 import { SignUpFormKeys } from "sign-up/enums";
 
 const DEFAULT_VALUES = {
@@ -48,15 +47,21 @@ export const useSignUpFormData = () => {
   const [sendVerificationCode] = useSendVerificationCodeMutation();
   const [signUp] = useSignUpMutation();
 
-  const sendVerificationCodeRequestState = useAppSelector(
-    selectSendVerificationCodeRequestState
-  );
+  const sendVerificationCodeRequestState = useAppSelector(selectSendVerificationCodeRequestState);
+  const verifyPhoneNumberRequestState = useAppSelector(selectVerifyPhoneNumberRequestState);
+
+  const sendVerificationCodeRequestIsLoading =
+    sendVerificationCodeRequestState === RequestState.LOADING;
+  const phoneNumberIsVerified = verifyPhoneNumberRequestState === RequestState.SUCCESS;
+
+  const buttonValueWhenRequestIsLoading = sendVerificationCodeRequestIsLoading
+    ? "Sending ..."
+    : "Verify";
+
+  const buttonText = phoneNumberIsVerified ? "Verified" : buttonValueWhenRequestIsLoading;
 
   const phoneNumber = watch(SignUpFormKeys.PHONE_NUMBER);
   const phoneNumberIsFilled = phoneNumber.includes("_");
-
-  const phoneNumberIsVerified =
-    sendVerificationCodeRequestState === RequestState.SUCCESS;
 
   const onClick = useCallback(() => {
     dispatch(setPhoneNumber(phoneNumber));
@@ -79,6 +84,7 @@ export const useSignUpFormData = () => {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.FIRST_NAME,
       label: capitalizeFirstLetter(SignUpFormKeys.FIRST_NAME),
+      placeholder: removeUnderscore(SignUpFormKeys.FIRST_NAME),
       register: register(SignUpFormKeys.FIRST_NAME, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.FIRST_NAME),
         pattern: {
@@ -93,6 +99,7 @@ export const useSignUpFormData = () => {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.LAST_NAME,
       label: capitalizeFirstLetter(SignUpFormKeys.LAST_NAME),
+      placeholder: removeUnderscore(SignUpFormKeys.LAST_NAME),
       register: register(SignUpFormKeys.LAST_NAME, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.LAST_NAME),
         pattern: {
@@ -107,6 +114,7 @@ export const useSignUpFormData = () => {
       type: InputTypes.NUMBER_WITH_MASK,
       key: SignUpFormKeys.PHONE_NUMBER,
       label: capitalizeFirstLetter(SignUpFormKeys.PHONE_NUMBER),
+      placeholder: removeUnderscore(SignUpFormKeys.PHONE_NUMBER),
       register: register(SignUpFormKeys.PHONE_NUMBER, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
         pattern: {
@@ -116,31 +124,36 @@ export const useSignUpFormData = () => {
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
       error: errors[SignUpFormKeys.PHONE_NUMBER]?.message,
-      format: "+ 48 ### ### ###",
-      allowEmptyFormatting: true,
-      mask: "_",
-      disabled: !phoneNumber || phoneNumberIsFilled,
-      buttonText: phoneNumberIsVerified ? "Verified" : "Verify",
-      onClick,
+      numberFieldWithMaskProps: {
+        format: "+ 48 ### ### ###",
+        allowEmptyFormatting: true,
+        mask: "_",
+        disabled: !phoneNumber || phoneNumberIsFilled,
+        buttonText,
+        onClick,
+      },
     },
     {
       type: InputTypes.PASSWORD,
       key: SignUpFormKeys.PASSWORD,
       label: capitalizeFirstLetter(SignUpFormKeys.PASSWORD),
+      placeholder: removeUnderscore(SignUpFormKeys.PASSWORD),
       register: register(SignUpFormKeys.PASSWORD, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.PASSWORD],
       error: errors[SignUpFormKeys.PASSWORD]?.message,
+      passwordFieldProps: {
+        showHyperlink: false,
+      },
     },
     {
       type: InputTypes.PASSWORD,
       key: SignUpFormKeys.CONFIRM_PASSWORD,
       label: capitalizeFirstLetter(SignUpFormKeys.CONFIRM_PASSWORD),
+      placeholder: removeUnderscore(SignUpFormKeys.CONFIRM_PASSWORD),
       register: register(SignUpFormKeys.CONFIRM_PASSWORD, {
-        required: generateMessageFieldIsRequired(
-          SignUpFormKeys.CONFIRM_PASSWORD
-        ),
+        required: generateMessageFieldIsRequired(SignUpFormKeys.CONFIRM_PASSWORD),
         validate: {
           matchesPreviousPassword: (value) => {
             const passwordValue = getValues(SignUpFormKeys.PASSWORD);
@@ -150,9 +163,8 @@ export const useSignUpFormData = () => {
       }),
       error: errors[SignUpFormKeys.CONFIRM_PASSWORD]?.message,
       isValueIncorrect: !!errors[SignUpFormKeys.CONFIRM_PASSWORD],
-      linkedFields: {
-        field: InputTypes.PASSWORD,
-        comparison: Comparison.EQUAL,
+      passwordFieldProps: {
+        showHyperlink: false,
       },
     },
   ];
