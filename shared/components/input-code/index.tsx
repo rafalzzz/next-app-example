@@ -1,12 +1,12 @@
 import React, {
-  useState,
   ChangeEvent,
   KeyboardEvent,
   useCallback,
+  useState,
 } from "react";
 import * as KEY from "consts/key-codes";
-import * as Styled from "./index.styled";
 import { DIGITS_ONLY } from "consts/regex";
+import * as Styled from "./index.styled";
 
 type InputCodeProps = {
   length: number;

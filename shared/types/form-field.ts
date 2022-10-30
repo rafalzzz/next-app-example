@@ -21,7 +21,7 @@ export type FormField<FormType> = {
   placeholder: string;
   register: UseFormRegisterReturn;
   isValueIncorrect: boolean;
-  error: string;
+  error?: string;
   disabled?: boolean;
   passwordFieldProps?: PasswordFieldProps;
   numberFieldWithMaskProps?: NumberFieldWithMaskProps;

@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-
 import * as Styled from "./index.styled";
 
 const NotFound: NextPage = () => {

@@ -1,7 +1,7 @@
-import { apiSlice } from "store/api-slice";
-import { REQUEST_URLS } from "consts/request-urls";
 import { SignInRequest } from "sign-in/types";
+import { apiSlice } from "store/api-slice";
 import { SharedResponse } from "types/.";
+import { REQUEST_URLS } from "consts/request-urls";
 
 const signInApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({

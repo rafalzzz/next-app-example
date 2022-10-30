@@ -1,18 +1,18 @@
-import { apiSlice } from "../../../store/api-slice";
-import { REQUEST_URLS } from "consts/request-urls";
 import {
   SendVerificationCodeRequest,
   SignUpRequest,
   VerifyPhoneNumberRequest,
 } from "sign-up/types";
-import { SharedResponse } from "types/response";
+import { toggleModal } from "store/modal";
 import {
   setSendVerificationCodeRequestState,
   setVerifyPhoneNumberRequestState,
 } from "store/sign-up";
-import { RequestState } from "enums/request-state";
-import { toggleModal } from "store/modal";
 import { displayErrorMessage } from "helpers/display-error-message";
+import { SharedResponse } from "types/response";
+import { RequestState } from "enums/request-state";
+import { REQUEST_URLS } from "consts/request-urls";
+import { apiSlice } from "../../../store/api-slice";
 
 const signUpApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
