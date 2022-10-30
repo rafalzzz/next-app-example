@@ -16,21 +16,21 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "pages/*": ["pages/*"],
-      "styles/*": ["styles/*"],
-      "api/*": ["api/*"],
       "common/*": ["common/*"],
+      "sign-in/*": ["features/sign-in/*"],
+      "sign-up/*": ["features/sign-up/*"],
+      "store/*": ["features/store/*"],
       "hooks/*": ["shared/hooks/*"],
+      "components/*": ["shared/components/*"],
       "helpers/*": ["shared/helpers/*"],
       "utils/*": ["shared/utils/*"],
-      "components/*": ["shared/components/*"],
       "types/*": ["shared/types/*"],
       "enums/*": ["shared/enums/*"],
       "consts/*": ["shared/consts/*"],
-      "sign-in/*": ["features/sign-in/*"],
-      "sign-up/*": ["features/sign-up/*"]
+      "styles/*": ["styles/*"],
+      "pages/*": ["pages/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "common/supabase-client.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "common/supabase-client.js", "pages/api/send-verification-code/index.js"],
   "exclude": ["node_modules"]
 }

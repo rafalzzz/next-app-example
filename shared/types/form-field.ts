@@ -10,7 +10,7 @@ export type NumberFieldWithMaskProps = {
   allowEmptyFormatting: boolean;
   mask: string | string[];
   buttonText: string;
-  disabled: boolean;
+  buttonIsDisabled: boolean;
   onClick: () => void;
 };
 
@@ -22,6 +22,7 @@ export type FormField<FormType> = {
   register: UseFormRegisterReturn;
   isValueIncorrect: boolean;
   error: string;
-  passwordFieldProps: PasswordFieldProps;
-  numberFieldWithMaskProps: NumberFieldWithMaskProps;
+  disabled?: boolean;
+  passwordFieldProps?: PasswordFieldProps;
+  numberFieldWithMaskProps?: NumberFieldWithMaskProps;
 };
