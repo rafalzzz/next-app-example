@@ -6,6 +6,7 @@ import { ThemeProvider } from "styled-components";
 import { store } from "store";
 import { GlobalStyle } from "styles/global-styles";
 import { light } from "styles/themes/light";
+import "react-toastify/dist/ReactToastify.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

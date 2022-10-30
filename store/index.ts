@@ -1,15 +1,23 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { FLUSH, PAUSE, PERSIST, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistStore,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
 import modal from "store/modal";
 import signUp from "store/sign-up";
 import signIn from "store/sign-in";
-import { api } from "api/api";
+import { apiSlice } from "store/api-slice";
 
 const rootReducer = combineReducers({
   modal,
   signUp,
   signIn,
-  [api.reducerPath]: api.reducer,
+  [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +30,7 @@ export const setupStore = (preloadedState: Record<string, any>) =>
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
-      }).concat(api.middleware),
+      }).concat(apiSlice.middleware),
   });
 
 export const store = setupStore({});

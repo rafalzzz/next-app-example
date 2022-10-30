@@ -50,7 +50,7 @@ export const NumberInputWithMask = styled(PatternFormat)<{ width?: number }>`
 
 export const Button = styled.button`
   height: 37px;
-  width: 50px;
+  width: 60px;
   border-radius: 0 10px 10px 0;
   border: none;
   outline: none;

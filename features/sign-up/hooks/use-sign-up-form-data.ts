@@ -3,10 +3,12 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 
+import { supabase } from "common/supabase";
 import { useAppDispatch, useAppSelector } from "hooks/.";
 import {
   capitalizeFirstLetter,
   displayErrorMessage,
+  generateId,
   generateMessageFieldIsRequired,
   removeUnderscore,
 } from "helpers/.";
@@ -17,8 +19,7 @@ import {
   setSendVerificationCodeRequestState,
   setSignUpRequestState,
 } from "store/sign-up";
-import { toggleModal } from "store/modal";
-import { useSendVerificationCodeMutation, useSignUpMutation } from "api/sign-up";
+import { useSendVerificationCodeMutation } from "sign-up/api";
 import * as REGEX from "consts/regex";
 import { SignUpRequest } from "sign-up/types";
 import { InputTypes, Paths, RequestState } from "enums/.";
@@ -45,20 +46,26 @@ export const useSignUpFormData = () => {
   const router = useRouter();
 
   const [sendVerificationCode] = useSendVerificationCodeMutation();
-  const [signUp] = useSignUpMutation();
 
-  const sendVerificationCodeRequestState = useAppSelector(selectSendVerificationCodeRequestState);
-  const verifyPhoneNumberRequestState = useAppSelector(selectVerifyPhoneNumberRequestState);
+  const sendVerificationCodeRequestState = useAppSelector(
+    selectSendVerificationCodeRequestState
+  );
+  const verifyPhoneNumberRequestState = useAppSelector(
+    selectVerifyPhoneNumberRequestState
+  );
 
   const sendVerificationCodeRequestIsLoading =
     sendVerificationCodeRequestState === RequestState.LOADING;
-  const phoneNumberIsVerified = verifyPhoneNumberRequestState === RequestState.SUCCESS;
+  const phoneNumberIsVerified =
+    verifyPhoneNumberRequestState === RequestState.SUCCESS;
 
   const buttonValueWhenRequestIsLoading = sendVerificationCodeRequestIsLoading
-    ? "Sending ..."
+    ? "Sending"
     : "Verify";
 
-  const buttonText = phoneNumberIsVerified ? "Verified" : buttonValueWhenRequestIsLoading;
+  const buttonText = phoneNumberIsVerified
+    ? "Verified"
+    : buttonValueWhenRequestIsLoading;
 
   const phoneNumber = watch(SignUpFormKeys.PHONE_NUMBER);
   const phoneNumberIsFilled = phoneNumber.includes("_");
@@ -66,17 +73,7 @@ export const useSignUpFormData = () => {
   const onClick = useCallback(() => {
     dispatch(setPhoneNumber(phoneNumber));
     dispatch(setSendVerificationCodeRequestState(RequestState.LOADING));
-    sendVerificationCode({ [SignUpFormKeys.PHONE_NUMBER]: phoneNumber })
-      .unwrap()
-      .then(({ message }) => {
-        dispatch(setSendVerificationCodeRequestState(RequestState.SUCCESS));
-        toast.success(message);
-        dispatch(toggleModal());
-      })
-      .catch((error) => {
-        displayErrorMessage(error);
-        dispatch(setSendVerificationCodeRequestState(RequestState.ERROR));
-      });
+    sendVerificationCode({ [SignUpFormKeys.PHONE_NUMBER]: phoneNumber });
   }, [phoneNumber, sendVerificationCode, dispatch]);
 
   const FORM_FIELDS = [
@@ -124,11 +121,12 @@ export const useSignUpFormData = () => {
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
       error: errors[SignUpFormKeys.PHONE_NUMBER]?.message,
+      disabled: phoneNumberIsVerified,
       numberFieldWithMaskProps: {
         format: "+ 48 ### ### ###",
         allowEmptyFormatting: true,
         mask: "_",
-        disabled: !phoneNumber || phoneNumberIsFilled,
+        buttonIsDisabled: !phoneNumber || phoneNumberIsFilled,
         buttonText,
         onClick,
       },
@@ -153,7 +151,9 @@ export const useSignUpFormData = () => {
       label: capitalizeFirstLetter(SignUpFormKeys.CONFIRM_PASSWORD),
       placeholder: removeUnderscore(SignUpFormKeys.CONFIRM_PASSWORD),
       register: register(SignUpFormKeys.CONFIRM_PASSWORD, {
-        required: generateMessageFieldIsRequired(SignUpFormKeys.CONFIRM_PASSWORD),
+        required: generateMessageFieldIsRequired(
+          SignUpFormKeys.CONFIRM_PASSWORD
+        ),
         validate: {
           matchesPreviousPassword: (value) => {
             const passwordValue = getValues(SignUpFormKeys.PASSWORD);
@@ -169,19 +169,28 @@ export const useSignUpFormData = () => {
     },
   ];
 
-  const onSubmit = (formData: SignUpRequest) => {
+  const onSubmit = async (formData: SignUpRequest) => {
     dispatch(setSignUpRequestState(RequestState.LOADING));
-    signUp(formData)
-      .unwrap()
-      .then(({ message }) => {
-        dispatch(setSignUpRequestState(RequestState.SUCCESS));
-        toast.success(message);
-        router.push(Paths.SIGN_IN);
-      })
-      .catch((error) => {
-        displayErrorMessage(error);
-        dispatch(setSignUpRequestState(RequestState.ERROR));
-      });
+
+    const { first_name, last_name, phone_number, password } = formData;
+
+    const { error } = await supabase.from("users").insert({
+      id: generateId(),
+      first_name,
+      last_name,
+      phone_number,
+      password,
+    });
+
+    if (error) {
+      displayErrorMessage(error);
+      dispatch(setSignUpRequestState(RequestState.ERROR));
+      return;
+    }
+
+    dispatch(setSignUpRequestState(RequestState.SUCCESS));
+    toast.success(error);
+    router.push(Paths.SIGN_IN);
   };
 
   return {

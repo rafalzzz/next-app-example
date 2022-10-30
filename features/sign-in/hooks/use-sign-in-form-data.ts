@@ -9,7 +9,7 @@ import {
   removeUnderscore,
 } from "helpers/.";
 import { setSignInRequestState } from "store/sign-in";
-import { useSignInMutation } from "api/sign-in";
+import { useSignInMutation } from "sign-in/api";
 import { SignInRequest } from "sign-in/types";
 import { SignInFormKeys } from "sign-in/enums";
 import { InputTypes, Paths, RequestState } from "enums/.";

@@ -4,10 +4,24 @@ import * as Styled from "./index.styled";
 export const NumberFieldWithMask = <FormType extends object>({
   formField,
 }: FieldProps<FormType>) => {
-  const { key, label, register, error, isValueIncorrect, numberFieldWithMaskProps } = formField;
+  const {
+    key,
+    label,
+    register,
+    error,
+    isValueIncorrect,
+    disabled,
+    numberFieldWithMaskProps,
+  } = formField;
 
-  const { format, allowEmptyFormatting, mask, buttonText, disabled, onClick } =
-    numberFieldWithMaskProps as NumberFieldWithMaskProps;
+  const {
+    format,
+    allowEmptyFormatting,
+    mask,
+    buttonText,
+    buttonIsDisabled,
+    onClick,
+  } = numberFieldWithMaskProps as NumberFieldWithMaskProps;
 
   const { name, onChange, ref } = register;
 
@@ -22,9 +36,14 @@ export const NumberFieldWithMask = <FormType extends object>({
           width={250}
           onChange={onChange}
           name={name}
+          disabled={disabled}
           getInputRef={ref}
         />
-        <Styled.Button type="button" disabled={disabled} onClick={onClick}>
+        <Styled.Button
+          type="button"
+          disabled={buttonIsDisabled}
+          onClick={onClick}
+        >
           {buttonText}
         </Styled.Button>
       </Styled.InputContainer>
