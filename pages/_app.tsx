@@ -1,9 +1,8 @@
-import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import { ThemeProvider } from "styled-components";
-
+import type { AppProps } from "next/app";
 import { store } from "store";
+import { ThemeProvider } from "styled-components";
 import { GlobalStyle } from "styles/global-styles";
 import { light } from "styles/themes/light";
 import "react-toastify/dist/ReactToastify.css";

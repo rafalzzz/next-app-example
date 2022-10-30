@@ -1,9 +1,18 @@
 import { useCallback } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
-
 import { supabase } from "common/supabase";
+import { useSendVerificationCodeMutation } from "sign-up/api";
+import { SignUpFormKeys } from "sign-up/enums";
+import { SignUpRequest } from "sign-up/types";
+import {
+  selectSendVerificationCodeRequestState,
+  selectVerifyPhoneNumberRequestState,
+  setPhoneNumber,
+  setSendVerificationCodeRequestState,
+  setSignUpRequestState,
+} from "store/sign-up";
 import { useAppDispatch, useAppSelector } from "hooks/.";
 import {
   capitalizeFirstLetter,
@@ -12,18 +21,8 @@ import {
   generateMessageFieldIsRequired,
   removeUnderscore,
 } from "helpers/.";
-import {
-  selectSendVerificationCodeRequestState,
-  selectVerifyPhoneNumberRequestState,
-  setPhoneNumber,
-  setSendVerificationCodeRequestState,
-  setSignUpRequestState,
-} from "store/sign-up";
-import { useSendVerificationCodeMutation } from "sign-up/api";
-import * as REGEX from "consts/regex";
-import { SignUpRequest } from "sign-up/types";
 import { InputTypes, Paths, RequestState } from "enums/.";
-import { SignUpFormKeys } from "sign-up/enums";
+import * as REGEX from "consts/regex";
 
 const DEFAULT_VALUES = {
   [SignUpFormKeys.FIRST_NAME]: "",

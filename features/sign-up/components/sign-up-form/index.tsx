@@ -1,5 +1,5 @@
-import { useSignUpFormData } from "sign-up/hooks";
 import { GenerateForm } from "components/.";
+import { useSignUpFormData } from "sign-up/hooks";
 import { SignUpRequest } from "sign-up/types";
 
 const SIGN_UP_BUTTON_VALUE = "Sign up!";

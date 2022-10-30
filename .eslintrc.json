@@ -4,7 +4,7 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "jsx-a11y", "react-hooks"],
+  "plugins": ["@typescript-eslint", "jsx-a11y", "react-hooks", "simple-import-sort"],
   "rules": {
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "error",
@@ -22,6 +22,35 @@
     "react/prop-types": 0,
     "react/require-default-props": 0,
     "curly": "error",
-    "no-param-reassign": 0
+    "no-param-reassign": 0,
+    "simple-import-sort/exports": "error",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          [
+            "^react",
+            "^\\u0000",
+            "^@?\\w",
+            "^common/",
+            "^sign-in/",
+            "^sign-up/",
+            "^store/",
+            "^hooks/",
+            "^componentsp/",
+            "^helpers/",
+            "^utils/",
+            "^types/",
+            "^enums/",
+            "^consts/",
+            "^styles/",
+            "^pages/",
+            "^\\.",
+            "\\.css$",
+            "\\.scss$"
+          ]
+        ]
+      }
+    ]
   }
 }

@@ -1,13 +1,13 @@
 import { useCallback } from "react";
-import { useAppDispatch, useAppSelector } from "hooks/.";
+import { InputCode, Modal } from "components/.";
+import { useVerifyPhoneNumberMutation } from "sign-up/api";
+import { selectModalIsOpen, toggleModal } from "store/modal";
 import {
   selectPhoneNumber,
   selectVerifyPhoneNumberRequestState,
   setVerifyPhoneNumberRequestState,
 } from "store/sign-up";
-import { selectModalIsOpen, toggleModal } from "store/modal";
-import { useVerifyPhoneNumberMutation } from "sign-up/api";
-import { Modal, InputCode } from "components/.";
+import { useAppDispatch, useAppSelector } from "hooks/.";
 import { RequestState } from "enums/request-state";
 import * as Styled from "./index.styled";
 

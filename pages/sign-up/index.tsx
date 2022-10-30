@@ -1,10 +1,10 @@
+import { Footer, Header, Hyperlink } from "components/.";
 import type { NextPage } from "next";
 import {
-  SignUpForm,
   PageHead,
   PhoneVerificationModal,
+  SignUpForm,
 } from "sign-up/components";
-import { Header, Footer, Hyperlink } from "components/.";
 import { Routes } from "enums/.";
 import * as Styled from "../index.styled";
 

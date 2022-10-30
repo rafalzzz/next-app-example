@@ -1,6 +1,6 @@
+import { Footer, Header, Hyperlink } from "components/.";
 import type { NextPage } from "next";
-import { SignInForm, PageHead } from "sign-in/components";
-import { Header, Hyperlink, Footer } from "components/.";
+import { PageHead, SignInForm } from "sign-in/components";
 import { Routes } from "enums/.";
 import * as Styled from "./index.styled";
 
