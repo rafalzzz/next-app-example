@@ -19,6 +19,7 @@
       "pages/*": ["pages/*"],
       "styles/*": ["styles/*"],
       "api/*": ["api/*"],
+      "common/*": ["common/*"],
       "hooks/*": ["shared/hooks/*"],
       "helpers/*": ["shared/helpers/*"],
       "utils/*": ["shared/utils/*"],
@@ -30,6 +31,6 @@
       "sign-up/*": ["features/sign-up/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "common/supabase-client.js"],
   "exclude": ["node_modules"]
 }

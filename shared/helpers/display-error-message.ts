@@ -1,9 +1,8 @@
 import { toast } from "react-toastify";
-import axios from "axios";
+import { PostgrestError } from "@supabase/supabase-js";
 
-export const displayErrorMessage = (error: unknown) => {
-  if (axios.isAxiosError(error) && error.response) {
-    const { message } = error.response.data;
+export const displayErrorMessage = ({ message }: PostgrestError) => {
+  if (message) {
     toast.error(message);
   } else {
     toast.error("Something went wrong");
