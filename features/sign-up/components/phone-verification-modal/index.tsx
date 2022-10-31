@@ -47,7 +47,7 @@ export const PhoneVerificationModal = () => {
         </header>
         <Styled.Main>
           <Styled.Text>Enter SMS code:</Styled.Text>
-          <InputCode length={4} onComplete={onCompleted} />
+          <InputCode length={6} onComplete={onCompleted} />
           {requestIsNotPending && <span>Loading ...</span>}
         </Styled.Main>
       </>

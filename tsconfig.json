@@ -19,7 +19,7 @@
       "common/*": ["common/*"],
       "sign-in/*": ["features/sign-in/*"],
       "sign-up/*": ["features/sign-up/*"],
-      "store/*": ["features/store/*"],
+      "store/*": ["store/*"],
       "hooks/*": ["shared/hooks/*"],
       "components/*": ["shared/components/*"],
       "helpers/*": ["shared/helpers/*"],
