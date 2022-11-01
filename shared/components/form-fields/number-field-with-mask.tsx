@@ -14,14 +14,8 @@ export const NumberFieldWithMask = <FormType extends object>({
     numberFieldWithMaskProps,
   } = formField;
 
-  const {
-    format,
-    allowEmptyFormatting,
-    mask,
-    buttonText,
-    buttonIsDisabled,
-    onClick,
-  } = numberFieldWithMaskProps as NumberFieldWithMaskProps;
+  const { format, allowEmptyFormatting, mask } =
+    numberFieldWithMaskProps as NumberFieldWithMaskProps;
 
   const { name, onChange, ref } = register;
 
@@ -33,19 +27,11 @@ export const NumberFieldWithMask = <FormType extends object>({
           format={format ?? ""}
           allowEmptyFormatting={allowEmptyFormatting}
           mask={mask}
-          width={250}
           onChange={onChange}
           name={name}
           disabled={disabled}
           getInputRef={ref}
         />
-        <Styled.Button
-          type="button"
-          disabled={buttonIsDisabled}
-          onClick={onClick}
-        >
-          {buttonText}
-        </Styled.Button>
       </Styled.InputContainer>
       {isValueIncorrect && <Styled.Error>{error}</Styled.Error>}
     </Styled.Label>

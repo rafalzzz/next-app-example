@@ -4,7 +4,6 @@ import { Button } from "components/.";
 import * as Styled from "./index.styled";
 
 type ModalProps = {
-  isOpen: boolean;
   children: JSX.Element;
   onCancel: () => void;
   showConfirmButton?: boolean;
@@ -12,7 +11,6 @@ type ModalProps = {
 };
 
 export const Modal = ({
-  isOpen,
   children,
   onClick,
   onCancel,
@@ -30,7 +28,7 @@ export const Modal = ({
 
   return mounted
     ? createPortal(
-        <Styled.Container isOpen={isOpen} onClick={onCancel}>
+        <Styled.Container onClick={onCancel}>
           <Styled.Content onClick={(e) => e.stopPropagation()}>
             {children}
             <Styled.ContentLine />

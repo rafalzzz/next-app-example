@@ -1,11 +1,10 @@
 import { useCallback } from "react";
 import { InputCode, Modal } from "components/.";
-import { useVerifyPhoneNumberMutation } from "sign-up/api";
+import { useSignUpMutation } from "sign-up/api";
 import { selectModalIsOpen, toggleModal } from "store/modal";
 import {
-  selectPhoneNumber,
-  selectVerifyPhoneNumberRequestState,
-  setVerifyPhoneNumberRequestState,
+  selectSignUpFormValues,
+  selectSignUpRequestState,
 } from "store/sign-up";
 import { useAppDispatch, useAppSelector } from "hooks/.";
 import { RequestState } from "enums/request-state";
@@ -15,40 +14,42 @@ export const PhoneVerificationModal = () => {
   const dispatch = useAppDispatch();
   const modalIsOpened = useAppSelector(selectModalIsOpen);
 
-  const [verifyPhoneNumber] = useVerifyPhoneNumberMutation();
+  const [signUp] = useSignUpMutation();
 
-  const phoneNumber = useAppSelector(selectPhoneNumber);
-  const verifyPhoneNumberRequestState = useAppSelector(
-    selectVerifyPhoneNumberRequestState
-  );
+  const signUpFormValues = useAppSelector(selectSignUpFormValues);
+  const signUpRequestState = useAppSelector(selectSignUpRequestState);
 
-  const requestIsNotPending =
-    verifyPhoneNumberRequestState === RequestState.LOADING;
+  const requestIsPending = signUpRequestState === RequestState.LOADING;
 
   const onCancel = useCallback(() => {
-    if (!requestIsNotPending) {
+    if (!requestIsPending) {
       dispatch(toggleModal());
     }
-  }, [requestIsNotPending, dispatch]);
+  }, [requestIsPending, dispatch]);
 
   const onCompleted = useCallback(
     (code: string) => {
-      dispatch(setVerifyPhoneNumberRequestState(RequestState.LOADING));
-      verifyPhoneNumber({ code, phone_number: phoneNumber });
+      if (code && signUpFormValues) {
+        signUp({ user_data: signUpFormValues, code });
+      }
     },
-    [dispatch, phoneNumber, verifyPhoneNumber]
+    [signUpFormValues, signUp]
   );
 
   return (
-    <Modal isOpen={modalIsOpened} onCancel={onCancel} showConfirmButton={false}>
+    <Modal onCancel={onCancel} showConfirmButton={false}>
       <>
         <header>
           <Styled.Title>Confirm your phone number</Styled.Title>
         </header>
         <Styled.Main>
           <Styled.Text>Enter SMS code:</Styled.Text>
-          <InputCode length={6} onComplete={onCompleted} />
-          {requestIsNotPending && <span>Loading ...</span>}
+          <InputCode
+            length={6}
+            loading={requestIsPending}
+            focusOnFirstInput={modalIsOpened}
+            onComplete={onCompleted}
+          />
         </Styled.Main>
       </>
     </Modal>

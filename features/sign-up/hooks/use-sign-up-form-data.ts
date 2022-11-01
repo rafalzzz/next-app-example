@@ -1,27 +1,16 @@
-import { useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { useRouter } from "next/router";
-import { supabase } from "common/supabase";
 import { useSendVerificationCodeMutation } from "sign-up/api";
 import { SignUpFormKeys } from "sign-up/enums";
-import { SignUpRequest } from "sign-up/types";
-import {
-  selectSendVerificationCodeRequestState,
-  selectVerifyPhoneNumberRequestState,
-  setPhoneNumber,
-  setSendVerificationCodeRequestState,
-  setSignUpRequestState,
-} from "store/sign-up";
-import { useAppDispatch, useAppSelector } from "hooks/.";
+import { SignUpFormType } from "sign-up/types";
+import { setSignUpFormValues } from "store/sign-up";
+import { useAppDispatch } from "hooks/.";
 import {
   capitalizeFirstLetter,
-  displayErrorMessage,
-  generateId,
+  encryptPassword,
   generateMessageFieldIsRequired,
   removeUnderscore,
 } from "helpers/.";
-import { InputTypes, Paths, RequestState } from "enums/.";
+import { InputTypes } from "enums/.";
 import * as REGEX from "consts/regex";
 
 const DEFAULT_VALUES = {
@@ -37,46 +26,15 @@ export const useSignUpFormData = () => {
     register,
     handleSubmit,
     getValues,
-    watch,
     formState: { errors },
-  } = useForm<SignUpRequest>({ defaultValues: DEFAULT_VALUES });
-
-  const dispatch = useAppDispatch();
-  const router = useRouter();
+  } = useForm<SignUpFormType>({ defaultValues: DEFAULT_VALUES });
 
   const [sendVerificationCode] = useSendVerificationCodeMutation();
 
-  const sendVerificationCodeRequestState = useAppSelector(
-    selectSendVerificationCodeRequestState
-  );
-  const verifyPhoneNumberRequestState = useAppSelector(
-    selectVerifyPhoneNumberRequestState
-  );
-
-  const sendVerificationCodeRequestIsLoading =
-    sendVerificationCodeRequestState === RequestState.LOADING;
-  const phoneNumberIsVerified =
-    verifyPhoneNumberRequestState === RequestState.SUCCESS;
-
-  const buttonValueWhenRequestIsLoading = sendVerificationCodeRequestIsLoading
-    ? "Sending"
-    : "Verify";
-
-  const buttonText = phoneNumberIsVerified
-    ? "Verified"
-    : buttonValueWhenRequestIsLoading;
-
-  const phoneNumber = watch(SignUpFormKeys.PHONE_NUMBER);
-  const phoneNumberIsFilled = phoneNumber.includes("_");
-
-  const onClick = useCallback(() => {
-    dispatch(setPhoneNumber(phoneNumber));
-    dispatch(setSendVerificationCodeRequestState(RequestState.LOADING));
-    sendVerificationCode({ [SignUpFormKeys.PHONE_NUMBER]: phoneNumber });
-  }, [phoneNumber, sendVerificationCode, dispatch]);
+  const dispatch = useAppDispatch();
 
   const FORM_FIELDS = [
-    {
+    /*  {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.FIRST_NAME,
       label: capitalizeFirstLetter(SignUpFormKeys.FIRST_NAME),
@@ -105,7 +63,7 @@ export const useSignUpFormData = () => {
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.LAST_NAME],
       error: errors[SignUpFormKeys.LAST_NAME]?.message,
-    },
+    }, */
     {
       type: InputTypes.NUMBER_WITH_MASK,
       key: SignUpFormKeys.PHONE_NUMBER,
@@ -120,14 +78,10 @@ export const useSignUpFormData = () => {
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
       error: errors[SignUpFormKeys.PHONE_NUMBER]?.message,
-      disabled: phoneNumberIsVerified,
       numberFieldWithMaskProps: {
         format: "+ 48 ### ### ###",
         allowEmptyFormatting: true,
         mask: "_",
-        buttonIsDisabled: !phoneNumber || phoneNumberIsFilled,
-        buttonText,
-        onClick,
       },
     },
     {
@@ -168,33 +122,21 @@ export const useSignUpFormData = () => {
     },
   ];
 
-  const onSubmit = async (formData: SignUpRequest) => {
-    dispatch(setSignUpRequestState(RequestState.LOADING));
+  const onSubmit = async (formData: SignUpFormType) => {
+    const { phone, password } = formData;
 
-    const { first_name, last_name, phone_number, password } = formData;
+    const formDataWithHashedPassword = {
+      phone,
+      password: encryptPassword(password),
+    };
 
-    const { error } = await supabase.from("users").insert({
-      id: generateId(),
-      first_name,
-      last_name,
-      phone_number,
-      password,
-    });
-
-    if (error) {
-      displayErrorMessage(error);
-      dispatch(setSignUpRequestState(RequestState.ERROR));
-      return;
-    }
-
-    dispatch(setSignUpRequestState(RequestState.SUCCESS));
-    toast.success(error);
-    router.push(Paths.SIGN_IN);
+    dispatch(setSignUpFormValues(formDataWithHashedPassword));
+    sendVerificationCode({ ...formDataWithHashedPassword });
   };
 
   return {
     formFields: FORM_FIELDS,
-    disableSubmitButton: !phoneNumberIsVerified,
+    disableSubmitButton: false,
     onSubmit: handleSubmit(onSubmit),
   };
 };

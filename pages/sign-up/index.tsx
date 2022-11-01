@@ -5,10 +5,17 @@ import {
   PhoneVerificationModal,
   SignUpForm,
 } from "sign-up/components";
+import { useRedirectWhenUserSignUp } from "sign-up/hooks";
+import { selectModalIsOpen } from "store/modal";
+import { useAppSelector } from "hooks/redux-hooks";
 import { Routes } from "enums/.";
 import * as Styled from "../index.styled";
 
 const Home: NextPage = () => {
+  useRedirectWhenUserSignUp();
+
+  const modalIsOpened = useAppSelector(selectModalIsOpen);
+
   return (
     <Styled.Container>
       <PageHead />
@@ -20,7 +27,7 @@ const Home: NextPage = () => {
           child={<Hyperlink url={Routes.LANDING_PAGE} text="Sign in" />}
         />
       </Styled.Main>
-      <PhoneVerificationModal />
+      {modalIsOpened && <PhoneVerificationModal />}
     </Styled.Container>
   );
 };

@@ -2,6 +2,7 @@ import React, {
   ChangeEvent,
   KeyboardEvent,
   useCallback,
+  useEffect,
   useState,
 } from "react";
 import * as KEY from "consts/key-codes";
@@ -11,6 +12,7 @@ import * as Styled from "./index.styled";
 type InputCodeProps = {
   length: number;
   loading?: boolean;
+  focusOnFirstInput?: boolean;
   onComplete: (code: string) => void;
 };
 
@@ -19,6 +21,7 @@ const INPUTS_ID_COMMON_PART = "input-code";
 export const InputCode = ({
   length,
   loading = false,
+  focusOnFirstInput = false,
   onComplete,
 }: InputCodeProps) => {
   const [inputsValues, setInputValues] = useState(
@@ -90,6 +93,12 @@ export const InputCode = ({
       },
     [inputsValues, moveFocusToNextInput, moveFocusToPrevInput]
   );
+
+  useEffect(() => {
+    document.getElementById(`${INPUTS_ID_COMMON_PART}-0`)?.focus();
+    if (focusOnFirstInput) {
+    }
+  }, [focusOnFirstInput]);
 
   return (
     <Styled.Container>
