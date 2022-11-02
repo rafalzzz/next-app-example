@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
+import { SignUpFormKeys } from "sign-up/enums";
 import { decryptPassword } from "helpers/decrypt-password";
 import { parsePhoneNumber } from "helpers/parse-phone-number";
 
@@ -9,6 +10,8 @@ export default async function handler(
 ) {
   const { phone, password } = data;
 
+  const parsedPhoneNumber = parsePhoneNumber(phone);
+
   const dataIncludesIncorrectValue = Object.values(data).some(
     (value) => typeof value !== "string"
   );
@@ -17,12 +20,25 @@ export default async function handler(
     return res.status(400).json({ message: "Wrong phone value" });
   }
 
-  const { data: signUpData, error } = await supabase.auth.signUp({
-    phone: parsePhoneNumber(phone),
+  const { data: users, error: userError } = await supabase
+    .from("profiles")
+    .select()
+    .eq(SignUpFormKeys.PHONE_NUMBER, phone);
+
+  if (users?.length) {
+    return res
+      .status(403)
+      .json({ message: `Phone number ${phone} is already taken` });
+  }
+
+  if (userError) {
+    return res.status(400).json({ message: userError.message });
+  }
+
+  const { error } = await supabase.auth.signUp({
+    phone: parsedPhoneNumber,
     password: decryptPassword(password),
   });
-
-  console.log({ signUpData, error });
 
   if (error) {
     return res.status(400).json({ message: error.message });

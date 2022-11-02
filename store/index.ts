@@ -8,10 +8,10 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist";
-import modal from "store/modal";
-import signUp from "store/sign-up";
-import signIn from "store/sign-in";
 import { apiSlice } from "store/api-slice";
+import modal from "store/modal";
+import signIn from "store/sign-in";
+import signUp from "store/sign-up";
 
 const rootReducer = combineReducers({
   modal,

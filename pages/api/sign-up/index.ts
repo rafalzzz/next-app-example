@@ -5,25 +5,36 @@ import { parsePhoneNumber } from "helpers/parse-phone-number";
 export default async function handler(
   {
     body: {
-      data: { user_data, code },
+      data: { user_data, token },
     },
   }: NextApiRequest,
   res: NextApiResponse<{ message: string }>
 ) {
-  const { phone } = user_data;
+  const { phone, password } = user_data;
 
   const parsedPhone = parsePhoneNumber(phone);
 
-  const { data, error } = await supabase.auth.verifyOtp({
+  const { data: verifiedUser, error } = await supabase.auth.verifyOtp({
     phone: parsedPhone,
-    token: code,
+    token,
     type: "sms",
   });
 
-  console.log({ data });
-
   if (error) {
     return res.status(400).json({ message: error.message });
+  }
+
+  if (verifiedUser.user?.id) {
+    const { error: createUserError } = await supabase.from("profiles").insert({
+      id: verifiedUser.user?.id,
+      ...user_data,
+      phone,
+      password,
+    });
+
+    if (createUserError) {
+      return res.status(400).json({ message: createUserError.message });
+    }
   }
 
   return res.status(200).json({

@@ -34,7 +34,7 @@ export const useSignUpFormData = () => {
   const dispatch = useAppDispatch();
 
   const FORM_FIELDS = [
-    /*  {
+    {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.FIRST_NAME,
       label: capitalizeFirstLetter(SignUpFormKeys.FIRST_NAME),
@@ -63,7 +63,7 @@ export const useSignUpFormData = () => {
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.LAST_NAME],
       error: errors[SignUpFormKeys.LAST_NAME]?.message,
-    }, */
+    },
     {
       type: InputTypes.NUMBER_WITH_MASK,
       key: SignUpFormKeys.PHONE_NUMBER,
@@ -126,11 +126,13 @@ export const useSignUpFormData = () => {
     const { phone, password } = formData;
 
     const formDataWithHashedPassword = {
-      phone,
-      password: encryptPassword(password),
+      [SignUpFormKeys.PHONE_NUMBER]: phone,
+      [SignUpFormKeys.PASSWORD]: encryptPassword(password),
     };
 
-    dispatch(setSignUpFormValues(formDataWithHashedPassword));
+    dispatch(
+      setSignUpFormValues({ ...formData, ...formDataWithHashedPassword })
+    );
     sendVerificationCode({ ...formDataWithHashedPassword });
   };
 

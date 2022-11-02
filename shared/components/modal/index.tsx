@@ -5,9 +5,10 @@ import * as Styled from "./index.styled";
 
 type ModalProps = {
   children: JSX.Element;
-  onCancel: () => void;
   showConfirmButton?: boolean;
+  showCancelButton?: boolean;
   onClick?: () => void;
+  onCancel?: () => void;
 };
 
 export const Modal = ({
@@ -15,6 +16,7 @@ export const Modal = ({
   onClick,
   onCancel,
   showConfirmButton = true,
+  showCancelButton = true,
 }: ModalProps) => {
   const [mounted, setMounted] = useState(false);
 
@@ -31,9 +33,9 @@ export const Modal = ({
         <Styled.Container onClick={onCancel}>
           <Styled.Content onClick={(e) => e.stopPropagation()}>
             {children}
-            <Styled.ContentLine />
+            {(showConfirmButton || showCancelButton) && <Styled.ContentLine />}
             <Styled.ButtonsContainer showConfirmButton>
-              <Button onClick={onCancel} text="Close" />
+              {showCancelButton && <Button onClick={onCancel} text="Close" />}
               {showConfirmButton && (
                 <Button onClick={onClick} color="green" text="Confirm" />
               )}

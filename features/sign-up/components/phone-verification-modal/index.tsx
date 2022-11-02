@@ -1,43 +1,42 @@
 import { useCallback } from "react";
 import { InputCode, Modal } from "components/.";
 import { useSignUpMutation } from "sign-up/api";
-import { selectModalIsOpen, toggleModal } from "store/modal";
-import {
-  selectSignUpFormValues,
-  selectSignUpRequestState,
-} from "store/sign-up";
-import { useAppDispatch, useAppSelector } from "hooks/.";
+import { selectModalIsOpen } from "store/modal";
+import { selectSignUpState } from "store/sign-up";
+import { useAppSelector } from "hooks/.";
 import { RequestState } from "enums/request-state";
+import { TokenValidityCounter } from "../token-validity-counter";
 import * as Styled from "./index.styled";
 
 export const PhoneVerificationModal = () => {
-  const dispatch = useAppDispatch();
   const modalIsOpened = useAppSelector(selectModalIsOpen);
-
-  const [signUp] = useSignUpMutation();
-
-  const signUpFormValues = useAppSelector(selectSignUpFormValues);
-  const signUpRequestState = useAppSelector(selectSignUpRequestState);
+  const { signUpFormValues, signUpRequestState } =
+    useAppSelector(selectSignUpState);
 
   const requestIsPending = signUpRequestState === RequestState.LOADING;
 
-  const onCancel = useCallback(() => {
-    if (!requestIsPending) {
-      dispatch(toggleModal());
-    }
-  }, [requestIsPending, dispatch]);
+  const [signUp] = useSignUpMutation();
 
   const onCompleted = useCallback(
-    (code: string) => {
-      if (code && signUpFormValues) {
-        signUp({ user_data: signUpFormValues, code });
+    (token: string) => {
+      if (token && signUpFormValues) {
+        const { first_name, last_name, phone, password } = signUpFormValues;
+        signUp({
+          user_data: {
+            first_name,
+            last_name,
+            phone,
+            password,
+          },
+          token,
+        });
       }
     },
     [signUpFormValues, signUp]
   );
 
   return (
-    <Modal onCancel={onCancel} showConfirmButton={false}>
+    <Modal showCancelButton={false} showConfirmButton={false}>
       <>
         <header>
           <Styled.Title>Confirm your phone number</Styled.Title>
@@ -50,6 +49,7 @@ export const PhoneVerificationModal = () => {
             focusOnFirstInput={modalIsOpened}
             onComplete={onCompleted}
           />
+          <TokenValidityCounter />
         </Styled.Main>
       </>
     </Modal>
