@@ -1,54 +1,55 @@
 import { useCallback } from "react";
 import { InputCode, Modal } from "components/.";
-import { useVerifyPhoneNumberMutation } from "sign-up/api";
-import { selectModalIsOpen, toggleModal } from "store/modal";
-import {
-  selectPhoneNumber,
-  selectVerifyPhoneNumberRequestState,
-  setVerifyPhoneNumberRequestState,
-} from "store/sign-up";
-import { useAppDispatch, useAppSelector } from "hooks/.";
+import { useSignUpMutation } from "sign-up/api";
+import { selectModalIsOpen } from "store/modal";
+import { selectSignUpState } from "store/sign-up";
+import { useAppSelector } from "hooks/.";
 import { RequestState } from "enums/request-state";
+import { TokenValidityCounter } from "../token-validity-counter";
 import * as Styled from "./index.styled";
 
 export const PhoneVerificationModal = () => {
-  const dispatch = useAppDispatch();
   const modalIsOpened = useAppSelector(selectModalIsOpen);
+  const { signUpFormValues, signUpRequestState } =
+    useAppSelector(selectSignUpState);
 
-  const [verifyPhoneNumber] = useVerifyPhoneNumberMutation();
+  const requestIsPending = signUpRequestState === RequestState.LOADING;
 
-  const phoneNumber = useAppSelector(selectPhoneNumber);
-  const verifyPhoneNumberRequestState = useAppSelector(
-    selectVerifyPhoneNumberRequestState
-  );
-
-  const requestIsNotPending =
-    verifyPhoneNumberRequestState === RequestState.LOADING;
-
-  const onCancel = useCallback(() => {
-    if (!requestIsNotPending) {
-      dispatch(toggleModal());
-    }
-  }, [requestIsNotPending, dispatch]);
+  const [signUp] = useSignUpMutation();
 
   const onCompleted = useCallback(
-    (code: string) => {
-      dispatch(setVerifyPhoneNumberRequestState(RequestState.LOADING));
-      verifyPhoneNumber({ code, phone_number: phoneNumber });
+    (token: string) => {
+      if (token && signUpFormValues) {
+        const { first_name, last_name, phone, password } = signUpFormValues;
+        signUp({
+          user_data: {
+            first_name,
+            last_name,
+            phone,
+            password,
+          },
+          token,
+        });
+      }
     },
-    [dispatch, phoneNumber, verifyPhoneNumber]
+    [signUpFormValues, signUp]
   );
 
   return (
-    <Modal isOpen={modalIsOpened} onCancel={onCancel} showConfirmButton={false}>
+    <Modal showCancelButton={false} showConfirmButton={false}>
       <>
         <header>
           <Styled.Title>Confirm your phone number</Styled.Title>
         </header>
         <Styled.Main>
           <Styled.Text>Enter SMS code:</Styled.Text>
-          <InputCode length={4} onComplete={onCompleted} />
-          {requestIsNotPending && <span>Loading ...</span>}
+          <InputCode
+            length={6}
+            loading={requestIsPending}
+            focusOnFirstInput={modalIsOpened}
+            onComplete={onCompleted}
+          />
+          <TokenValidityCounter />
         </Styled.Main>
       </>
     </Modal>

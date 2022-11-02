@@ -1,6 +1,6 @@
-import { SignUpFormKeys, VerifyPhoneNumberKeys } from "sign-up/enums";
+import { SignUpFormKeys } from "sign-up/enums";
 
-export type SignUpRequest = {
+export type SignUpFormType = {
   [SignUpFormKeys.FIRST_NAME]: string;
   [SignUpFormKeys.LAST_NAME]: string;
   [SignUpFormKeys.PHONE_NUMBER]: string;
@@ -10,9 +10,10 @@ export type SignUpRequest = {
 
 export type SendVerificationCodeRequest = {
   [SignUpFormKeys.PHONE_NUMBER]: string;
+  [SignUpFormKeys.PASSWORD]: string;
 };
 
-export type VerifyPhoneNumberRequest = {
-  [VerifyPhoneNumberKeys.CODE]: string;
-  [SignUpFormKeys.PHONE_NUMBER]: string;
+export type SignUpRequest = {
+  user_data: Omit<SignUpFormType, SignUpFormKeys.CONFIRM_PASSWORD>;
+  token: string;
 };

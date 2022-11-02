@@ -9,9 +9,6 @@ export type NumberFieldWithMaskProps = {
   format: string;
   allowEmptyFormatting: boolean;
   mask: string | string[];
-  buttonText: string;
-  buttonIsDisabled: boolean;
-  onClick: () => void;
 };
 
 export type FormField<FormType> = {

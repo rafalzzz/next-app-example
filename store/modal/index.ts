@@ -1,5 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { persistReducer } from "redux-persist";
+import storage from "shared/utils/storage";
 import type { RootState } from "store";
+import { ReducerKeys } from "enums/reducer-keys";
 
 interface SignUpState {
   isOpen: boolean;
@@ -10,7 +13,7 @@ const initialState: SignUpState = {
 };
 
 export const modalSlice = createSlice({
-  name: "modal",
+  name: ReducerKeys.MODAL,
   initialState,
   reducers: {
     toggleModal: (state) => {
@@ -23,4 +26,12 @@ export const { toggleModal } = modalSlice.actions;
 
 export const selectModalIsOpen = (state: RootState) => state.modal.isOpen;
 
-export default modalSlice.reducer;
+const persistConfig = {
+  key: ReducerKeys.MODAL,
+  storage,
+  whitelist: ["isOpen"],
+};
+
+const persistedReducer = persistReducer(persistConfig, modalSlice.reducer);
+
+export default persistedReducer;

@@ -69,7 +69,6 @@ export const useSignInFormData = () => {
         }
       })
       .catch((error) => {
-        console.log({ error });
         displayErrorMessage(error);
         dispatch(setSignInRequestState(RequestState.ERROR));
       });
