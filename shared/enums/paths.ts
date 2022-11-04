@@ -1,5 +1,6 @@
 export enum Paths {
-  MAIN = "/app",
-  SIGN_IN = "/",
+  LANDING_PAGE = "/",
+  SIGN_IN = "/sign-in",
   SIGN_UP = "/sign-up",
+  FORGOT_PASSWORD = "/forgot-password",
 }
