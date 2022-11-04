@@ -1,10 +1,13 @@
 import { Footer, Header, Hyperlink } from "components/.";
 import type { NextPage } from "next";
 import { PageHead, SignInForm } from "sign-in/components";
+import { useRedirectWhenUserSignIn } from "sign-in/hooks";
 import { Routes } from "enums/.";
 import * as Styled from "./index.styled";
 
 const Home: NextPage = () => {
+  useRedirectWhenUserSignIn();
+
   return (
     <Styled.Container>
       <PageHead />

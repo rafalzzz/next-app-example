@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RequestState } from "enums/.";
 import type { RootState } from "store";
+import { RequestState } from "enums/.";
 
 interface SignInState {
   signInRequestState: RequestState;
@@ -22,6 +22,7 @@ export const signInSlice = createSlice({
 
 export const { setSignInRequestState } = signInSlice.actions;
 
-export const selectSignInRequestState = (state: RootState) => state.signUp.signUpRequestState;
+export const selectSignInRequestState = (state: RootState) =>
+  state.signIn.signInRequestState;
 
 export default signInSlice.reducer;
