@@ -14,10 +14,10 @@ export type NumberFieldWithMaskProps = {
 export type FormField<FormType> = {
   type: InputTypes;
   key: Path<FormType>;
-  label: string;
-  placeholder: string;
   register: UseFormRegisterReturn;
   isValueIncorrect: boolean;
+  label?: string;
+  placeholder?: string;
   error?: string;
   disabled?: boolean;
   passwordFieldProps?: PasswordFieldProps;

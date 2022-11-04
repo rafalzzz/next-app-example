@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Hyperlink } from "components/.";
-import { capitalizeFirstLetter } from "helpers/capitalize-first-letter";
+import { transformInputKeyToLabel } from "helpers/index";
 import { FieldProps, PasswordFieldProps } from "types/.";
 import { InputTypes, Routes } from "enums/.";
 import * as Styled from "./index.styled";
@@ -22,13 +22,15 @@ export const PasswordField = <FormType extends object>({
 
   const { showHyperlink } = passwordFieldProps as PasswordFieldProps;
 
+  const inputLabel = label ?? transformInputKeyToLabel(key);
+
   return (
     <Styled.Label key={key}>
-      <Styled.InputName>{`${label}:`}</Styled.InputName>
+      <Styled.InputName>{`${inputLabel}:`}</Styled.InputName>
       <Styled.InputContainer>
         <Styled.Input
           type={showPassword ? InputTypes.TEXT : InputTypes.PASSWORD}
-          placeholder={capitalizeFirstLetter(placeholder)}
+          placeholder={placeholder ?? inputLabel}
           width={250}
           {...register}
         />

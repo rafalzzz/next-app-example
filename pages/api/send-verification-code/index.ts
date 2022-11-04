@@ -8,7 +8,7 @@ export default async function handler(
   { body: { data } }: NextApiRequest,
   res: NextApiResponse<{ message: string }>
 ) {
-  const { phone, password } = data;
+  const { email, phone, password } = data;
 
   const parsedPhoneNumber = parsePhoneNumber(phone);
 
@@ -20,19 +20,32 @@ export default async function handler(
     return res.status(400).json({ message: "Wrong phone value" });
   }
 
-  const { data: users, error: userError } = await supabase
+  const { data: emails, error: emailsError } = await supabase
     .from("profiles")
-    .select()
+    .select(SignUpFormKeys.EMAIL)
+    .eq(SignUpFormKeys.EMAIL, email);
+
+  if (emails?.length) {
+    return res.status(403).json({ message: `Email ${email} is already taken` });
+  }
+
+  if (emailsError) {
+    return res.status(400).json({ message: emailsError.message });
+  }
+
+  const { data: phoneNumbers, error: phonesError } = await supabase
+    .from("profiles")
+    .select(SignUpFormKeys.PHONE_NUMBER)
     .eq(SignUpFormKeys.PHONE_NUMBER, phone);
 
-  if (users?.length) {
+  if (phoneNumbers?.length) {
     return res
       .status(403)
       .json({ message: `Phone number ${phone} is already taken` });
   }
 
-  if (userError) {
-    return res.status(400).json({ message: userError.message });
+  if (phonesError) {
+    return res.status(400).json({ message: phonesError.message });
   }
 
   const { error } = await supabase.auth.signUp({

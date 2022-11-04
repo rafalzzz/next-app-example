@@ -4,18 +4,14 @@ import { SignUpFormKeys } from "sign-up/enums";
 import { SignUpFormType } from "sign-up/types";
 import { setSignUpFormValues } from "store/sign-up";
 import { useAppDispatch } from "hooks/.";
-import {
-  capitalizeFirstLetter,
-  encryptPassword,
-  generateMessageFieldIsRequired,
-  removeUnderscore,
-} from "helpers/.";
+import { encryptPassword, generateMessageFieldIsRequired } from "helpers/.";
 import { InputTypes } from "enums/.";
 import * as REGEX from "consts/regex";
 
 const DEFAULT_VALUES = {
   [SignUpFormKeys.FIRST_NAME]: "",
   [SignUpFormKeys.LAST_NAME]: "",
+  [SignUpFormKeys.EMAIL]: "",
   [SignUpFormKeys.PHONE_NUMBER]: "",
   [SignUpFormKeys.PASSWORD]: "",
   [SignUpFormKeys.CONFIRM_PASSWORD]: "",
@@ -37,8 +33,6 @@ export const useSignUpFormData = () => {
     {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.FIRST_NAME,
-      label: capitalizeFirstLetter(SignUpFormKeys.FIRST_NAME),
-      placeholder: removeUnderscore(SignUpFormKeys.FIRST_NAME),
       register: register(SignUpFormKeys.FIRST_NAME, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.FIRST_NAME),
         pattern: {
@@ -52,8 +46,6 @@ export const useSignUpFormData = () => {
     {
       type: InputTypes.TEXT,
       key: SignUpFormKeys.LAST_NAME,
-      label: capitalizeFirstLetter(SignUpFormKeys.LAST_NAME),
-      placeholder: removeUnderscore(SignUpFormKeys.LAST_NAME),
       register: register(SignUpFormKeys.LAST_NAME, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.LAST_NAME),
         pattern: {
@@ -65,10 +57,21 @@ export const useSignUpFormData = () => {
       error: errors[SignUpFormKeys.LAST_NAME]?.message,
     },
     {
+      type: InputTypes.TEXT,
+      key: SignUpFormKeys.EMAIL,
+      register: register(SignUpFormKeys.EMAIL, {
+        required: generateMessageFieldIsRequired(SignUpFormKeys.EMAIL),
+        pattern: {
+          value: REGEX.EMAIL_VALIDATION,
+          message: "Invalid email",
+        },
+      }),
+      isValueIncorrect: !!errors[SignUpFormKeys.EMAIL],
+      error: errors[SignUpFormKeys.EMAIL]?.message,
+    },
+    {
       type: InputTypes.NUMBER_WITH_MASK,
       key: SignUpFormKeys.PHONE_NUMBER,
-      label: capitalizeFirstLetter(SignUpFormKeys.PHONE_NUMBER),
-      placeholder: removeUnderscore(SignUpFormKeys.PHONE_NUMBER),
       register: register(SignUpFormKeys.PHONE_NUMBER, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
         pattern: {
@@ -87,8 +90,6 @@ export const useSignUpFormData = () => {
     {
       type: InputTypes.PASSWORD,
       key: SignUpFormKeys.PASSWORD,
-      label: capitalizeFirstLetter(SignUpFormKeys.PASSWORD),
-      placeholder: removeUnderscore(SignUpFormKeys.PASSWORD),
       register: register(SignUpFormKeys.PASSWORD, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
       }),
@@ -101,8 +102,6 @@ export const useSignUpFormData = () => {
     {
       type: InputTypes.PASSWORD,
       key: SignUpFormKeys.CONFIRM_PASSWORD,
-      label: capitalizeFirstLetter(SignUpFormKeys.CONFIRM_PASSWORD),
-      placeholder: removeUnderscore(SignUpFormKeys.CONFIRM_PASSWORD),
       register: register(SignUpFormKeys.CONFIRM_PASSWORD, {
         required: generateMessageFieldIsRequired(
           SignUpFormKeys.CONFIRM_PASSWORD
@@ -123,9 +122,10 @@ export const useSignUpFormData = () => {
   ];
 
   const onSubmit = async (formData: SignUpFormType) => {
-    const { phone, password } = formData;
+    const { email, phone, password } = formData;
 
     const formDataWithHashedPassword = {
+      [SignUpFormKeys.EMAIL]: email,
       [SignUpFormKeys.PHONE_NUMBER]: phone,
       [SignUpFormKeys.PASSWORD]: encryptPassword(password),
     };
