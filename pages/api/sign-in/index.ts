@@ -1,13 +1,15 @@
+import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
 import { SignUpFormKeys } from "sign-up/enums";
-import { decryptPassword, parsePhoneNumber } from "helpers/index";
+import { decryptPassword } from "helpers/index";
+import { generateToken } from "./helpers";
 
 export default async function handler(
-  { body: { data } }: NextApiRequest,
-  res: NextApiResponse<{ message: string }>
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-  const { email, password } = data;
+  const { email, password } = req.body.data;
 
   const { data: users, error } = await supabase
     .from("profiles")
@@ -31,16 +33,17 @@ export default async function handler(
     return res.status(400).json({ message: "Incorrect password" });
   }
 
-  const registeredUserPhone = parsePhoneNumber(users[0].phone);
+  const token = generateToken(users[0].id);
 
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    phone: registeredUserPhone,
-    password: encryptedUserPassword,
-  });
-
-  if (signInError) {
-    return res.status(400).json({ message: signInError.message });
-  }
+  res.setHeader(
+    "Authorization",
+    cookie.serialize("Bearer ", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      path: "/",
+    })
+  );
 
   return res.status(200).json({
     message: "Signed-in successfully",

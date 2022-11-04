@@ -1,13 +1,10 @@
-import type { NextPage } from "next";
-import { supabase } from "common/supabase";
+import type { NextApiRequest, NextPage } from "next";
 import { useRedirectWhenUserSignIn } from "sign-in/hooks";
 import { Paths } from "enums/paths";
 import * as Styled from "./index.styled";
 
-export const getServerSideProps = async () => {
-  const { error } = await supabase.auth.getSession();
-
-  if (error) {
+export function getServerSideProps({ req }: { req: NextApiRequest }) {
+  if (!req.cookies.token) {
     return {
       redirect: {
         destination: Paths.SIGN_IN,
@@ -16,10 +13,8 @@ export const getServerSideProps = async () => {
     };
   }
 
-  return {
-    props: {},
-  };
-};
+  return { props: {} };
+}
 
 const Home: NextPage = () => {
   useRedirectWhenUserSignIn();
