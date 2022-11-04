@@ -5,6 +5,7 @@ const nextConfig = {
     API_URL: process.env.API_URL,
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_KEY: process.env.SUPABASE_KEY,
+    JWT_SECRET: process.env.JWT_SECRET,
   },
   swcMinify: true,
   compiler: {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Hyperlink } from "components/.";
 import { transformInputKeyToLabel } from "helpers/index";
 import { FieldProps, PasswordFieldProps } from "types/.";
-import { InputTypes, Routes } from "enums/.";
+import { InputTypes, Paths } from "enums/.";
 import * as Styled from "./index.styled";
 
 export const PasswordField = <FormType extends object>({
@@ -46,7 +46,7 @@ export const PasswordField = <FormType extends object>({
       )}
       {showHyperlink && (
         <Hyperlink
-          url={Routes.FORGOT_PASSWORD}
+          url={Paths.FORGOT_PASSWORD}
           text={"Forgot password?"}
           fontSize={0.8}
         />
