@@ -1,6 +1,6 @@
 import { SignInFormKeys } from "sign-in/enums";
 
 export type SignInRequest = {
-  [SignInFormKeys.LOGIN]: string;
+  [SignInFormKeys.EMAIL]: string;
   [SignInFormKeys.PASSWORD]: string;
 };
