@@ -20,11 +20,13 @@ export const PhoneVerificationModal = () => {
   const onCompleted = useCallback(
     (token: string) => {
       if (token && signUpFormValues) {
-        const { first_name, last_name, phone, password } = signUpFormValues;
+        const { first_name, last_name, email, phone, password } =
+          signUpFormValues;
         signUp({
           user_data: {
             first_name,
             last_name,
+            email,
             phone,
             password,
           },

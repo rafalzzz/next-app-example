@@ -6,3 +6,4 @@ export * from "./generate-id";
 export * from "./generate-message-field-is-required";
 export * from "./parse-phone-number";
 export * from "./remove-underscore";
+export * from "./trasform-input-key-to-label";

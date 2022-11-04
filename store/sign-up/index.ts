@@ -8,7 +8,6 @@ import { ReducerKeys, RequestState } from "enums/.";
 const TOKEN_EXPIRATION_TIME = 60;
 
 interface SignUpState {
-  phoneNumber: string;
   sendVerificationCodeRequestState: RequestState;
   signUpRequestState: RequestState;
   signUpFormValues: SignUpFormType | null;
@@ -16,7 +15,6 @@ interface SignUpState {
 }
 
 const initialState: SignUpState = {
-  phoneNumber: "",
   sendVerificationCodeRequestState: RequestState.IDLE,
   signUpRequestState: RequestState.IDLE,
   signUpFormValues: null,
@@ -27,9 +25,6 @@ export const signUpSlice = createSlice({
   name: ReducerKeys.SIGN_UP,
   initialState,
   reducers: {
-    setPhoneNumber: (state, action: PayloadAction<string>) => {
-      state.phoneNumber = action.payload;
-    },
     setSendVerificationCodeRequestState: (
       state,
       action: PayloadAction<RequestState>
@@ -46,7 +41,6 @@ export const signUpSlice = createSlice({
       state.tokenValidityTime = state.tokenValidityTime - 1;
     },
     setClearSignUpData: (state) => {
-      state.phoneNumber = initialState.phoneNumber;
       state.sendVerificationCodeRequestState =
         initialState.sendVerificationCodeRequestState;
       state.signUpRequestState = initialState.signUpRequestState;
@@ -57,7 +51,6 @@ export const signUpSlice = createSlice({
 });
 
 export const {
-  setPhoneNumber,
   setSendVerificationCodeRequestState,
   setSignUpRequestState,
   setSignUpFormValues,
@@ -65,7 +58,6 @@ export const {
   setClearSignUpData,
 } = signUpSlice.actions;
 
-export const selectPhoneNumber = (state: RootState) => state.signUp.phoneNumber;
 export const selectSendVerificationCodeRequestState = (state: RootState) =>
   state.signUp.sendVerificationCodeRequestState;
 export const selectSignUpRequestState = (state: RootState) =>
@@ -75,7 +67,7 @@ export const selectSignUpState = (state: RootState) => state.signUp;
 const persistConfig = {
   key: ReducerKeys.SIGN_UP,
   storage,
-  blacklist: [],
+  blacklist: ["sendVerificationCodeRequestState", "signUpRequestState"],
 };
 
 const persistedReducer = persistReducer(persistConfig, signUpSlice.reducer);

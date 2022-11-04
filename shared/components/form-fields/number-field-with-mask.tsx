@@ -1,3 +1,4 @@
+import { transformInputKeyToLabel } from "helpers/trasform-input-key-to-label";
 import { FieldProps, NumberFieldWithMaskProps } from "types/.";
 import * as Styled from "./index.styled";
 
@@ -19,9 +20,11 @@ export const NumberFieldWithMask = <FormType extends object>({
 
   const { name, onChange, ref } = register;
 
+  const inputLabel = label ?? transformInputKeyToLabel(key);
+
   return (
     <Styled.Label key={key}>
-      <Styled.InputName>{`${label}:`}</Styled.InputName>
+      <Styled.InputName>{`${inputLabel}:`}</Styled.InputName>
       <Styled.InputContainer>
         <Styled.NumberInputWithMask
           format={format ?? ""}
