@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Paths } from "enums/paths";
 
-const DISALLOWED_PATH_WITH_TOKEN = [Paths.SIGN_IN, Paths.SIGN_UP];
+const DISALLOWED_PATHS_WITH_TOKEN = [Paths.SIGN_IN, Paths.SIGN_UP];
 
 export default function middleware(req: NextRequest) {
   const token = req.cookies.get("token");
@@ -12,11 +12,11 @@ export default function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(url));
   }
 
-  const isDisallowedUrlsWithToken = DISALLOWED_PATH_WITH_TOKEN.some((path) =>
+  const isDisallowedUrlsWithToken = DISALLOWED_PATHS_WITH_TOKEN.some((path) =>
     req.url.includes(path)
   );
 
-  if ((token && isDisallowedUrlsWithToken) || req.url.includes(Paths.SIGN_UP)) {
+  if (token && isDisallowedUrlsWithToken) {
     const url = `${origin}${Paths.DASHBOARD}`;
     return NextResponse.redirect(new URL(url));
   }
