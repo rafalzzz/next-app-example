@@ -1,6 +1,5 @@
 import type { BaseQueryFn } from "@reduxjs/toolkit/query";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import Cookies from "js-cookie";
 
 export const axiosBaseQuery =
   (
@@ -30,10 +29,6 @@ export const axiosBaseQuery =
         },
         withCredentials: true,
       });
-
-      if (result.headers.authorization) {
-        Cookies.set("token", result.headers.authorization.split(" ")[1]);
-      }
 
       return { data: result.data };
     } catch (axiosError) {
