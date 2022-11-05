@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
 import { SignUpFormKeys } from "sign-up/enums";
 import { decryptPassword } from "helpers/index";
+import { CookieNames } from "enums/cookie-names";
 import { generateToken } from "./helpers";
 
 export default async function handler(
@@ -35,7 +36,7 @@ export default async function handler(
 
   const token = generateToken(users[0].id);
 
-  const serialised = serialize("token", token, {
+  const serialised = serialize(CookieNames.TOKEN, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV !== "development",
     sameSite: "strict",

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { CookieNames } from "enums/cookie-names";
 import { Paths } from "enums/paths";
 
 const DISALLOWED_PATHS_WITH_TOKEN = [Paths.SIGN_IN, Paths.SIGN_UP];
 
 export default function middleware(req: NextRequest) {
-  const token = req.cookies.get("token");
+  const token = req.cookies.get(CookieNames.TOKEN);
   const origin = process.env.API_URL;
 
   if (!token && req.url.includes(Paths.DASHBOARD)) {
