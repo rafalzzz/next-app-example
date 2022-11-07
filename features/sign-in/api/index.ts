@@ -6,7 +6,7 @@ import { SharedResponse } from "types/.";
 import { RequestState } from "enums/request-state";
 import { REQUEST_URLS } from "consts/request-urls";
 
-const signInApi = apiSlice.injectEndpoints({
+export const signInApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     signIn: build.mutation<SharedResponse, SignInRequest>({
       query(body) {

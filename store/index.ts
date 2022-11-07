@@ -13,7 +13,7 @@ import modal from "store/modal";
 import signIn from "store/sign-in";
 import signUp from "store/sign-up";
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   modal,
   signUp,
   signIn,

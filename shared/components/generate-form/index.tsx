@@ -36,7 +36,7 @@ export const GenerateForm = <FormType extends object>({
   };
 
   return (
-    <Styled.Form onSubmit={handleSubmit}>
+    <Styled.Form onSubmit={handleSubmit} data-testid="form">
       {formFields.map((formField) => getFormField(formField))}
       <Button text={buttonValue} disabled={disableSubmitButton} type="submit" />
     </Styled.Form>

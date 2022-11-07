@@ -4,6 +4,7 @@ import { supabase } from "common/supabase";
 import { SignUpFormKeys } from "sign-up/enums";
 import { decryptPassword } from "helpers/index";
 import { CookieNames } from "enums/cookie-names";
+import * as C from "./consts";
 import { generateToken } from "./helpers";
 
 export default async function handler(
@@ -22,7 +23,7 @@ export default async function handler(
   }
 
   if (!users.length) {
-    return res.status(400).json({ message: "User does not exist" });
+    return res.status(400).json({ message: C.USER_DOES_NOT_EXIST_MESSAGE });
   }
 
   const encryptedUserPassword = decryptPassword(password);
@@ -31,7 +32,7 @@ export default async function handler(
     encryptedUserPassword === encryptedRegisteredUserPassword;
 
   if (!passwordIsCorrect) {
-    return res.status(400).json({ message: "Incorrect password" });
+    return res.status(400).json({ message: C.INCORRECT_PASSWORD_MESSAGE });
   }
 
   const token = generateToken(users[0].id);
@@ -46,6 +47,6 @@ export default async function handler(
   res.setHeader("Set-Cookie", serialised);
 
   return res.status(200).json({
-    message: "Signed-in successfully",
+    message: C.SIGNED_IN_SUCCESS_MESSAGE,
   });
 }

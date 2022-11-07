@@ -24,6 +24,7 @@
       "components/*": ["shared/components/*"],
       "helpers/*": ["shared/helpers/*"],
       "utils/*": ["shared/utils/*"],
+      "test-utils/*": ["shared/test-utils/*"],
       "types/*": ["shared/types/*"],
       "enums/*": ["shared/enums/*"],
       "consts/*": ["shared/consts/*"],
