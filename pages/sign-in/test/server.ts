@@ -1,5 +1,5 @@
 import { PathParams, rest } from "msw";
-import { setupServer } from "msw/lib/node";
+import { setupServer } from "msw/node";
 import { SignInRequest } from "sign-in/types";
 import { generateResponseMessage } from "helpers/generate-response-message";
 import { SharedResponse } from "types/response";

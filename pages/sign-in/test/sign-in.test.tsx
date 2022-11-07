@@ -2,8 +2,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { setupStore } from "store";
 import { renderWithProviders } from "test-utils/.";
 import { signInApi } from "sign-in/api";
-import SignIn from "store/sign-in";
-import { RequestState } from "enums/index";
+import SignIn from "..";
 import { server } from "./server";
 
 const store = setupStore({});
@@ -24,13 +23,8 @@ describe("DictionariesPagination", () => {
 
   it("should render DictionaryPagination component with fetched data", async () => {
     //@ts-ignore
-    const { getByTestId } = renderWithProviders(<SignIn />, {
-      preloadedState: {
-        signIn: {
-          signInRequestState: RequestState.IDLE,
-        },
-      },
-    });
+    // eslint-disable-next-line react/jsx-no-undef
+    const { getByTestId } = renderWithProviders(<SignIn />);
 
     const form = getByTestId("form");
 

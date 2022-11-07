@@ -4,6 +4,8 @@ import { ToastContainer } from "react-toastify";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { render } from "@testing-library/react";
 import { setupStore } from "store";
+import { ThemeProvider } from "styled-components";
+import { light } from "styles/themes/light";
 
 export function renderWithProviders(
   ui: ReactElement<unknown, string | JSXElementConstructor<unknown>>,
@@ -19,8 +21,10 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: JSX.Element }) {
     return (
       <Provider store={store}>
-        <ToastContainer />
-        {children}
+        <ThemeProvider theme={light}>
+          <ToastContainer />
+          {children}
+        </ThemeProvider>
       </Provider>
     );
   }
