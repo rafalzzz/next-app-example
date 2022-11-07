@@ -1,8 +1,9 @@
-import cookie from "cookie";
+import { serialize } from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
 import { SignUpFormKeys } from "sign-up/enums";
 import { decryptPassword } from "helpers/index";
+import { CookieNames } from "enums/cookie-names";
 import { generateToken } from "./helpers";
 
 export default async function handler(
@@ -35,15 +36,14 @@ export default async function handler(
 
   const token = generateToken(users[0].id);
 
-  res.setHeader(
-    "Authorization",
-    cookie.serialize("Bearer ", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== "development",
-      sameSite: "strict",
-      path: "/",
-    })
-  );
+  const serialised = serialize(CookieNames.TOKEN, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "strict",
+    path: "/",
+  });
+
+  res.setHeader("Set-Cookie", serialised);
 
   return res.status(200).json({
     message: "Signed-in successfully",

@@ -1,5 +1,5 @@
 export enum Paths {
-  LANDING_PAGE = "/",
+  DASHBOARD = "/dashboard",
   SIGN_IN = "/sign-in",
   SIGN_UP = "/sign-up",
   FORGOT_PASSWORD = "/forgot-password",

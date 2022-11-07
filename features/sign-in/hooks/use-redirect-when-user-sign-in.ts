@@ -14,7 +14,7 @@ export const useRedirectWhenUserSignIn = () => {
 
   useEffect(() => {
     if (requestIsSuccess) {
-      router.push(Paths.LANDING_PAGE);
+      router.push(Paths.DASHBOARD);
       dispatch(setSignInRequestState(RequestState.IDLE));
     }
   }, [dispatch, requestIsSuccess, router]);
