@@ -17,9 +17,12 @@ export const TextField = <FormType extends object>({
       <Styled.Input
         type={InputTypes.TEXT}
         placeholder={placeholder ?? inputLabel}
+        data-testid={`${key}-input`}
         {...register}
       />
-      {isValueIncorrect && <Styled.Error>{error}</Styled.Error>}
+      {isValueIncorrect && (
+        <Styled.Error data-testid={`${key}-error`}>{error}</Styled.Error>
+      )}
     </Styled.Label>
   );
 };

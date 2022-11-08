@@ -11,7 +11,6 @@ export function renderWithProviders(
   ui: ReactElement<unknown, string | JSXElementConstructor<unknown>>,
   {
     preloadedState = {},
-    // Automatically create a store instance if no store was passed in
     store = setupStore(preloadedState),
     ...renderOptions
   } = {}

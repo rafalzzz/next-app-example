@@ -34,9 +34,12 @@ export const NumberFieldWithMask = <FormType extends object>({
           name={name}
           disabled={disabled}
           getInputRef={ref}
+          data-testid={`${key}-input`}
         />
       </Styled.InputContainer>
-      {isValueIncorrect && <Styled.Error>{error}</Styled.Error>}
+      {isValueIncorrect && (
+        <Styled.Error data-testid={`${key}-error`}>{error}</Styled.Error>
+      )}
     </Styled.Label>
   );
 };

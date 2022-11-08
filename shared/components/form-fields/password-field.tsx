@@ -32,6 +32,7 @@ export const PasswordField = <FormType extends object>({
           type={showPassword ? InputTypes.TEXT : InputTypes.PASSWORD}
           placeholder={placeholder ?? inputLabel}
           width={250}
+          data-testid={`${key}-input`}
           {...register}
         />
         <Styled.Button
@@ -42,13 +43,16 @@ export const PasswordField = <FormType extends object>({
         </Styled.Button>
       </Styled.InputContainer>
       {isValueIncorrect && (
-        <Styled.Error marginBottom={10}>{error}</Styled.Error>
+        <Styled.Error marginBottom={10} data-testid={`${key}-error`}>
+          {error}
+        </Styled.Error>
       )}
       {showHyperlink && (
         <Hyperlink
           url={Paths.FORGOT_PASSWORD}
           text={"Forgot password?"}
           fontSize={0.8}
+          testId={key}
         />
       )}
     </Styled.Label>
