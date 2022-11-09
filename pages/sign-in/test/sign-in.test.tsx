@@ -28,7 +28,6 @@ describe("DictionariesPagination", () => {
   afterEach(() => {
     server.resetHandlers();
     store.dispatch(signInApi.util.resetApiState());
-    jest.clearAllMocks();
   });
 
   afterAll(() => {
