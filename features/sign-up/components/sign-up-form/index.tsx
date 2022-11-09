@@ -7,6 +7,7 @@ import { selectSignUpRequestState } from "store/sign-up";
 import { useAppSelector } from "hooks/redux-hooks";
 import { Paths } from "enums/paths";
 import { RequestState } from "enums/request-state";
+import { SIGN_UP } from "consts/form-test-ids";
 
 const SIGN_UP_BUTTON_VALUE = "Sign up!";
 
@@ -29,6 +30,7 @@ export const SignUpForm = () => {
       buttonValue={SIGN_UP_BUTTON_VALUE}
       disableSubmitButton={disableSubmitButton}
       handleSubmit={onSubmit}
+      testId={SIGN_UP}
     />
   );
 };
