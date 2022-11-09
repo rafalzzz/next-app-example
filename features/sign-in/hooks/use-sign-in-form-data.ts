@@ -39,6 +39,10 @@ export const useSignInFormData = () => {
       key: SignInFormKeys.PASSWORD,
       register: register(SignInFormKeys.PASSWORD, {
         required: generateMessageFieldIsRequired(SignInFormKeys.PASSWORD),
+        validate: (value) =>
+          value.length < 6
+            ? "Password must contain minimum 6 characters"
+            : undefined,
       }),
       isValueIncorrect: !!errors[SignInFormKeys.PASSWORD],
       error: errors[SignInFormKeys.PASSWORD]?.message,

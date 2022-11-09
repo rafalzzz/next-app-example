@@ -74,6 +74,7 @@ export const useSignUpFormData = () => {
       key: SignUpFormKeys.PHONE_NUMBER,
       register: register(SignUpFormKeys.PHONE_NUMBER, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
+        minLength: 6,
         pattern: {
           value: REGEX.STRING_INCLUDES_UNDERSCORE_SIGN,
           message: "Enter correct phone number",
@@ -92,6 +93,10 @@ export const useSignUpFormData = () => {
       key: SignUpFormKeys.PASSWORD,
       register: register(SignUpFormKeys.PASSWORD, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
+        validate: (value) =>
+          value.length < 6
+            ? "Password must contain minimum 6 characters"
+            : undefined,
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.PASSWORD],
       error: errors[SignUpFormKeys.PASSWORD]?.message,

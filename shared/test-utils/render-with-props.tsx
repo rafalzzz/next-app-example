@@ -9,6 +9,7 @@ import { light } from "styles/themes/light";
 
 export function renderWithProviders(
   ui: ReactElement<unknown, string | JSXElementConstructor<unknown>>,
+  //@ts-ignore
   {
     preloadedState = {},
     store = setupStore(preloadedState),
