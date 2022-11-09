@@ -4,12 +4,13 @@ import { setupStore } from "store";
 import { renderWithProviders } from "test-utils/.";
 import { mockedPushMethod } from "test-utils/mocked-use-router-methods";
 import { signInApi } from "sign-in/api";
+import { CORRECT_EMAIL } from "sign-in/consts/emails";
+import * as C from "sign-in/consts/errors";
 import { SignInFormKeys } from "sign-in/enums";
+import { server } from "sign-in/test-utils/server";
 import { Paths } from "enums/paths";
 import { SIGN_IN } from "consts/form-test-ids";
 import SignIn from "..";
-import { CORRECT_EMAIL } from "./consts";
-import { server } from "./server";
 
 const LOGIN_INPUT_TEST_ID = `${SignInFormKeys.EMAIL}-input`;
 const PASSWORD_INPUT_TEST_ID = `${SignInFormKeys.PASSWORD}-input`;
@@ -45,6 +46,7 @@ describe("DictionariesPagination", () => {
     expect(loginInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(formButton).toBeInTheDocument();
+    expect(formButton).toBeEnabled();
     expect(loginError).not.toBeInTheDocument();
     expect(passwordError).not.toBeInTheDocument();
   });
@@ -59,6 +61,7 @@ describe("DictionariesPagination", () => {
     const loginError = await findByTestId(LOGIN_INPUT_ERROR_TEST_ID);
     const passwordError = await findByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
 
+    expect(formButton).toBeEnabled();
     expect(loginError).toBeInTheDocument();
     expect(passwordError).toBeInTheDocument();
   });
@@ -80,9 +83,42 @@ describe("DictionariesPagination", () => {
     const passwordError = await findByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
 
     await waitFor(() => {
+      expect(formButton).toBeEnabled();
       expect(loginError).toBeInTheDocument();
+      expect(loginError).toHaveTextContent(C.INVALID_EMAIL_MESSAGE);
       expect(passwordError).toBeInTheDocument();
+      expect(passwordError).toHaveTextContent(C.SHORT_PASSWORD_MESSAGE);
     });
+  });
+
+  it("disable submit button when request is pending", async () => {
+    const { findByTestId, queryByTestId } = renderWithProviders(<SignIn />);
+
+    const loginInput = await findByTestId(LOGIN_INPUT_TEST_ID);
+    const passwordInput = await findByTestId(PASSWORD_INPUT_TEST_ID);
+
+    await waitFor(() => {
+      fireEvent.change(loginInput, { target: { value: CORRECT_EMAIL } });
+      fireEvent.change(passwordInput, { target: { value: "test1234" } });
+    });
+
+    const formButton = await findByTestId(FORM_BUTTON_TEST_ID);
+
+    await waitFor(() => {
+      fireEvent.click(formButton);
+    });
+
+    const loginError = queryByTestId(LOGIN_INPUT_ERROR_TEST_ID);
+    const passwordError = queryByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
+
+    await waitFor(
+      () => {
+        expect(formButton).toBeDisabled();
+        expect(loginError).not.toBeInTheDocument();
+        expect(passwordError).not.toBeInTheDocument();
+      },
+      { timeout: 1500 }
+    );
   });
 
   it("redirect to Dashboard when user sign-in", async () => {
@@ -105,16 +141,47 @@ describe("DictionariesPagination", () => {
     const loginError = queryByTestId(LOGIN_INPUT_ERROR_TEST_ID);
     const passwordError = queryByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
 
-    await waitFor(() => {
-      expect(loginError).not.toBeInTheDocument();
-      expect(passwordError).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(formButton).toBeEnabled();
+        expect(loginError).not.toBeInTheDocument();
+        expect(passwordError).not.toBeInTheDocument();
+        expect(mockedPushMethod).toBeCalledTimes(1);
+        expect(mockedPushMethod).toBeCalledWith(Paths.DASHBOARD);
+      },
+      { timeout: 2500 }
+    );
+  });
+
+  it("display toast error with error from response", async () => {
+    const { findByTestId, queryByTestId, findByText } = renderWithProviders(
+      <SignIn />
+    );
+
+    const loginInput = await findByTestId(LOGIN_INPUT_TEST_ID);
+    const passwordInput = await findByTestId(PASSWORD_INPUT_TEST_ID);
 
     await waitFor(() => {
+      fireEvent.change(loginInput, { target: { value: "test1234@test.com" } });
+      fireEvent.change(passwordInput, { target: { value: "test1234" } });
+    });
+
+    const formButton = await findByTestId(FORM_BUTTON_TEST_ID);
+
+    await waitFor(() => {
+      fireEvent.click(formButton);
+    });
+
+    const loginError = queryByTestId(LOGIN_INPUT_ERROR_TEST_ID);
+    const passwordError = queryByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
+
+    const toastError = await findByText(C.USER_DOES_NOT_EXIST_MESSAGE);
+
+    await waitFor(() => {
+      expect(formButton).toBeEnabled();
       expect(loginError).not.toBeInTheDocument();
       expect(passwordError).not.toBeInTheDocument();
-      expect(mockedPushMethod).toBeCalledTimes(1);
-      expect(mockedPushMethod).toBeCalledWith(Paths.DASHBOARD);
+      expect(toastError).toBeInTheDocument();
     });
   });
 });

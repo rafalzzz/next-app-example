@@ -1,7 +1,7 @@
 import { serialize } from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
-import * as C from "sign-in/consts";
+import * as C from "sign-in/consts/errors";
 import { SignUpFormKeys } from "sign-up/enums";
 import { decryptPassword, generateResponseMessage } from "helpers/index";
 import { CookieNames } from "enums/cookie-names";
