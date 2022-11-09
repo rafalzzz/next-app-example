@@ -28,6 +28,7 @@ describe("DictionariesPagination", () => {
   afterEach(() => {
     server.resetHandlers();
     store.dispatch(signInApi.util.resetApiState());
+    jest.clearAllMocks();
   });
 
   afterAll(() => {
@@ -182,6 +183,7 @@ describe("DictionariesPagination", () => {
       expect(loginError).not.toBeInTheDocument();
       expect(passwordError).not.toBeInTheDocument();
       expect(toastError).toBeInTheDocument();
+      expect(mockedPushMethod).not.toBeCalled();
     });
   });
 });
