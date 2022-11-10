@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useSendVerificationCodeMutation } from "sign-up/api";
+import * as C from "sign-up/consts/messages";
 import { SignUpFormKeys } from "sign-up/enums";
 import { SignUpFormType } from "sign-up/types";
 import { setSignUpFormValues } from "store/sign-up";
@@ -37,7 +38,7 @@ export const useSignUpFormData = () => {
         required: generateMessageFieldIsRequired(SignUpFormKeys.FIRST_NAME),
         pattern: {
           value: REGEX.FIRST_NAME_VALIDATION,
-          message: "Invalid first name",
+          message: C.INVALID_FIRST_NAME_MESSAGE,
         },
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.FIRST_NAME],
@@ -50,7 +51,7 @@ export const useSignUpFormData = () => {
         required: generateMessageFieldIsRequired(SignUpFormKeys.LAST_NAME),
         pattern: {
           value: REGEX.LAST_NAME_VALIDATION,
-          message: "Invalid last name",
+          message: C.INVALID_LAST_NAME_MESSAGE,
         },
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.LAST_NAME],
@@ -63,7 +64,7 @@ export const useSignUpFormData = () => {
         required: generateMessageFieldIsRequired(SignUpFormKeys.EMAIL),
         pattern: {
           value: REGEX.EMAIL_VALIDATION,
-          message: "Invalid email",
+          message: C.INVALID_EMAIL_MESSAGE,
         },
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.EMAIL],
@@ -74,10 +75,9 @@ export const useSignUpFormData = () => {
       key: SignUpFormKeys.PHONE_NUMBER,
       register: register(SignUpFormKeys.PHONE_NUMBER, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PHONE_NUMBER),
-        minLength: 6,
         pattern: {
           value: REGEX.STRING_INCLUDES_UNDERSCORE_SIGN,
-          message: "Enter correct phone number",
+          message: C.INVALID_PHONE_MESSAGE,
         },
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.PHONE_NUMBER],
@@ -94,9 +94,7 @@ export const useSignUpFormData = () => {
       register: register(SignUpFormKeys.PASSWORD, {
         required: generateMessageFieldIsRequired(SignUpFormKeys.PASSWORD),
         validate: (value) =>
-          value.length < 6
-            ? "Password must contain minimum 6 characters"
-            : undefined,
+          value.length < 6 ? C.SHORT_PASSWORD_MESSAGE : undefined,
       }),
       isValueIncorrect: !!errors[SignUpFormKeys.PASSWORD],
       error: errors[SignUpFormKeys.PASSWORD]?.message,
@@ -114,7 +112,7 @@ export const useSignUpFormData = () => {
         validate: {
           matchesPreviousPassword: (value) => {
             const passwordValue = getValues(SignUpFormKeys.PASSWORD);
-            return passwordValue === value || "Passwords do not match";
+            return passwordValue === value || C.PASSWORD_DOES_NOT_MATCH_MESSAGE;
           },
         },
       }),

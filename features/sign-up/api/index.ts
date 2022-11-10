@@ -11,7 +11,7 @@ import { RequestState } from "enums/request-state";
 import { REQUEST_URLS } from "consts/request-urls";
 import { apiSlice } from "../../../store/api-slice";
 
-const signUpApi = apiSlice.injectEndpoints({
+export const signUpApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     sendVerificationCode: build.mutation<
       SharedResponse,

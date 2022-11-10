@@ -1,11 +1,13 @@
 import "@testing-library/jest-dom/extend-expect";
+import { fireEvent, waitFor } from "@testing-library/react";
 import { setupStore } from "store";
 import { renderWithProviders } from "test-utils/.";
-import { signInApi } from "sign-in/api";
-import { server } from "sign-in/test-utils/server";
+import { signUpApi } from "sign-up/api";
+import * as C from "sign-up/consts/messages";
 import { SignUpFormKeys } from "sign-up/enums";
+import { server } from "sign-up/test-utils/server";
 import { SIGN_UP } from "consts/form-test-ids";
-import SignUP from "..";
+import SignUp from "..";
 
 const FIRST_NAME_INPUT_TEST_ID = `${SignUpFormKeys.FIRST_NAME}-input`;
 const LAST_NAME_INPUT_TEST_ID = `${SignUpFormKeys.LAST_NAME}-input`;
@@ -30,7 +32,7 @@ describe("Sign-up page", () => {
 
   afterEach(() => {
     server.resetHandlers();
-    store.dispatch(signInApi.util.resetApiState());
+    store.dispatch(signUpApi.util.resetApiState());
   });
 
   afterAll(() => {
@@ -38,7 +40,7 @@ describe("Sign-up page", () => {
   });
 
   it("should render SignUp form elements correctly", async () => {
-    const { queryByTestId } = renderWithProviders(<SignUP />);
+    const { queryByTestId } = renderWithProviders(<SignUp />);
 
     const firstNameInput = queryByTestId(FIRST_NAME_INPUT_TEST_ID);
     const lastNameInput = queryByTestId(LAST_NAME_INPUT_TEST_ID);
@@ -62,6 +64,7 @@ describe("Sign-up page", () => {
     expect(phoneNumberInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(confirmPasswordInput).toBeInTheDocument();
+
     expect(formButton).toBeInTheDocument();
     expect(formButton).toBeEnabled();
 
@@ -73,55 +76,129 @@ describe("Sign-up page", () => {
     expect(confirmPasswordError).not.toBeInTheDocument();
   });
 
-  /*  it("show errors when inputs are not filled and user submit form", async () => {
-    const { findByTestId } = renderWithProviders(<SignIn />);
+  it("show errors when inputs are not filled and user submit form", async () => {
+    const { findByTestId } = renderWithProviders(<SignUp />);
 
     const formButton = await findByTestId(FORM_BUTTON_TEST_ID);
 
     fireEvent.click(formButton);
 
-    const loginError = await findByTestId(LOGIN_INPUT_ERROR_TEST_ID);
+    const firstNameError = await findByTestId(FIRST_NAME_INPUT_ERROR_TEST_ID);
+    const lastNameError = await findByTestId(LAST_NAME_INPUT_ERROR_TEST_ID);
+    const emailError = await findByTestId(EMAIL_INPUT_ERROR_TEST_ID);
+    const phoneNumberError = await findByTestId(
+      PHONE_NUMBER_INPUT_ERROR_TEST_ID
+    );
     const passwordError = await findByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
+    const confirmPasswordError = await findByTestId(
+      CONFIRM_PASSWORD_INPUT_ERROR_TEST_ID
+    );
 
     expect(formButton).toBeEnabled();
-    expect(loginError).toBeInTheDocument();
+    expect(firstNameError).toBeInTheDocument();
+    expect(lastNameError).toBeInTheDocument();
+    expect(emailError).toBeInTheDocument();
+    expect(phoneNumberError).toBeInTheDocument();
     expect(passwordError).toBeInTheDocument();
+    expect(confirmPasswordError).toBeInTheDocument();
   });
 
   it("display errors when input values are incorrect", async () => {
-    const { findByTestId } = renderWithProviders(<SignIn />);
+    const { findByTestId } = renderWithProviders(<SignUp />);
 
-    const loginInput = await findByTestId(LOGIN_INPUT_TEST_ID);
+    const firstNameInput = await findByTestId(FIRST_NAME_INPUT_TEST_ID);
+    const lastNameInput = await findByTestId(LAST_NAME_INPUT_TEST_ID);
+    const emailInput = await findByTestId(EMAIL_INPUT_TEST_ID);
+    const phoneNumberInput = await findByTestId(PHONE_NUMBER_INPUT_TEST_ID);
     const passwordInput = await findByTestId(PASSWORD_INPUT_TEST_ID);
+    const confirmPasswordInput = await findByTestId(
+      CONFIRM_PASSWORD_INPUT_TEST_ID
+    );
 
-    fireEvent.change(loginInput, { target: { value: "test" } });
+    fireEvent.change(firstNameInput, { target: { value: "#" } });
+    fireEvent.change(lastNameInput, { target: { value: "#" } });
+    fireEvent.change(emailInput, { target: { value: "test" } });
+    fireEvent.change(phoneNumberInput, { target: { value: "123" } });
     fireEvent.change(passwordInput, { target: { value: "test" } });
+    fireEvent.change(confirmPasswordInput, { target: { value: "test1" } });
 
     const formButton = await findByTestId(FORM_BUTTON_TEST_ID);
 
     fireEvent.click(formButton);
 
-    const loginError = await findByTestId(LOGIN_INPUT_ERROR_TEST_ID);
+    const firstNameError = await findByTestId(FIRST_NAME_INPUT_ERROR_TEST_ID);
+    const lastNameError = await findByTestId(LAST_NAME_INPUT_ERROR_TEST_ID);
+    const emailError = await findByTestId(EMAIL_INPUT_ERROR_TEST_ID);
+    const phoneNumberError = await findByTestId(
+      PHONE_NUMBER_INPUT_ERROR_TEST_ID
+    );
     const passwordError = await findByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
+    const confirmPasswordError = await findByTestId(
+      CONFIRM_PASSWORD_INPUT_ERROR_TEST_ID
+    );
 
     await waitFor(() => {
       expect(formButton).toBeEnabled();
-      expect(loginError).toBeInTheDocument();
-      expect(loginError).toHaveTextContent(C.INVALID_EMAIL_MESSAGE);
+      expect(firstNameError).toBeInTheDocument();
+      expect(firstNameError).toHaveTextContent(C.INVALID_FIRST_NAME_MESSAGE);
+      expect(lastNameError).toBeInTheDocument();
+      expect(lastNameError).toHaveTextContent(C.INVALID_LAST_NAME_MESSAGE);
+      expect(emailError).toBeInTheDocument();
+      expect(emailError).toHaveTextContent(C.INVALID_EMAIL_MESSAGE);
+      expect(phoneNumberError).toBeInTheDocument();
+      expect(phoneNumberError).toHaveTextContent(C.INVALID_PHONE_MESSAGE);
       expect(passwordError).toBeInTheDocument();
       expect(passwordError).toHaveTextContent(C.SHORT_PASSWORD_MESSAGE);
+      expect(confirmPasswordError).toBeInTheDocument();
+      expect(confirmPasswordError).toHaveTextContent(
+        C.PASSWORD_DOES_NOT_MATCH_MESSAGE
+      );
     });
   });
 
-  it("disable submit button when request is pending", async () => {
-    const { findByTestId, queryByTestId } = renderWithProviders(<SignIn />);
+  /* it("disable submit button when request is pending", async () => {
+    const { findByTestId, queryByTestId } = renderWithProviders(<SignUp />, {
+      preloadedState: {
+        signUp: {
+          ...initialState,
+          _persist: { version: 1, rehydrated: false },
+          sendVerificationCodeRequestState: RequestState.SUCCESS,
+          signUpFormValues: {
+            [SignUpFormKeys.FIRST_NAME]: "Test",
+            [SignUpFormKeys.LAST_NAME]: "Test",
+            [SignUpFormKeys.EMAIL]: "test@test.com",
+            [SignUpFormKeys.PHONE_NUMBER]: "48111111111",
+            [SignUpFormKeys.PASSWORD]: "test1234",
+            [SignUpFormKeys.CONFIRM_PASSWORD]: "test1234",
+          },
+          ...rootReducer,
+        },
+      },
+    });
 
-    const loginInput = await findByTestId(LOGIN_INPUT_TEST_ID);
+    const firstNameInput = await findByTestId(FIRST_NAME_INPUT_TEST_ID);
+    const lastNameInput = await findByTestId(LAST_NAME_INPUT_TEST_ID);
+    const emailInput = await findByTestId(EMAIL_INPUT_TEST_ID);
+    const phoneNumberInput = await findByTestId(PHONE_NUMBER_INPUT_TEST_ID);
     const passwordInput = await findByTestId(PASSWORD_INPUT_TEST_ID);
+    const confirmPasswordInput = await findByTestId(
+      CONFIRM_PASSWORD_INPUT_TEST_ID
+    );
+
+    fireEvent.change(firstNameInput, { target: { value: "#" } });
+    fireEvent.change(lastNameInput, { target: { value: "#" } });
+    fireEvent.change(emailInput, { target: { value: "test" } });
+    fireEvent.change(phoneNumberInput, { target: { value: "123" } });
+    fireEvent.change(passwordInput, { target: { value: "test" } });
+    fireEvent.change(confirmPasswordInput, { target: { value: "test1" } });
 
     await waitFor(() => {
-      fireEvent.change(loginInput, { target: { value: CORRECT_EMAIL } });
+      fireEvent.change(firstNameInput, { target: { value: "Test" } });
+      fireEvent.change(lastNameInput, { target: { value: "Test" } });
+      fireEvent.change(emailInput, { target: { value: CORRECT_EMAIL } });
+      fireEvent.change(phoneNumberInput, { target: { value: "111111111" } });
       fireEvent.change(passwordInput, { target: { value: "test1234" } });
+      fireEvent.change(confirmPasswordInput, { target: { value: "test1234" } });
     });
 
     const formButton = await findByTestId(FORM_BUTTON_TEST_ID);
@@ -130,14 +207,24 @@ describe("Sign-up page", () => {
       fireEvent.click(formButton);
     });
 
-    const loginError = queryByTestId(LOGIN_INPUT_ERROR_TEST_ID);
+    const firstNameError = queryByTestId(FIRST_NAME_INPUT_ERROR_TEST_ID);
+    const lastNameError = queryByTestId(LAST_NAME_INPUT_ERROR_TEST_ID);
+    const emailError = queryByTestId(EMAIL_INPUT_ERROR_TEST_ID);
+    const phoneNumberError = queryByTestId(PHONE_NUMBER_INPUT_ERROR_TEST_ID);
     const passwordError = queryByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
+    const confirmPasswordError = queryByTestId(
+      CONFIRM_PASSWORD_INPUT_ERROR_TEST_ID
+    );
 
     await waitFor(
       () => {
         expect(formButton).toBeDisabled();
-        expect(loginError).not.toBeInTheDocument();
+        expect(firstNameError).not.toBeInTheDocument();
+        expect(lastNameError).not.toBeInTheDocument();
+        expect(emailError).not.toBeInTheDocument();
+        expect(phoneNumberError).not.toBeInTheDocument();
         expect(passwordError).not.toBeInTheDocument();
+        expect(confirmPasswordError).not.toBeInTheDocument();
       },
       { timeout: 1500 }
     );
