@@ -1,7 +1,10 @@
 import { GenerateForm } from "components/.";
 import { useSignUpFormData } from "sign-up/hooks";
 import { SignUpFormType } from "sign-up/types";
-import { selectSignUpRequestState } from "store/sign-up";
+import {
+  selectSendVerificationCodeRequestState,
+  selectSignUpRequestState,
+} from "store/sign-up";
 import { useAppSelector } from "hooks/redux-hooks";
 import { RequestState } from "enums/request-state";
 import { SIGN_UP } from "consts/form-test-ids";
@@ -12,7 +15,13 @@ export const SignUpForm = () => {
   const { formFields, onSubmit } = useSignUpFormData();
 
   const signUpRequestStatus = useAppSelector(selectSignUpRequestState);
-  const isLoading = signUpRequestStatus === RequestState.LOADING;
+  const sendVerificationCodeRequestState = useAppSelector(
+    selectSendVerificationCodeRequestState
+  );
+  const isLoading = [
+    sendVerificationCodeRequestState,
+    signUpRequestStatus,
+  ].some((state) => state === RequestState.LOADING);
 
   return (
     <GenerateForm<SignUpFormType>

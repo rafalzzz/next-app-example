@@ -11,18 +11,20 @@ import * as Styled from "./index.styled";
 
 type InputCodeProps = {
   length: number;
-  loading?: boolean;
   focusOnFirstInput?: boolean;
   onComplete: (code: string) => void;
+  loading?: boolean;
+  inputTestId?: string;
 };
 
 const INPUTS_ID_COMMON_PART = "input-code";
 
 export const InputCode = ({
   length,
+  onComplete,
   loading = false,
   focusOnFirstInput = false,
-  onComplete,
+  inputTestId = "false",
 }: InputCodeProps) => {
   const [inputsValues, setInputValues] = useState(
     [...Array(length)].map(() => "")
@@ -115,6 +117,7 @@ export const InputCode = ({
               readOnly={loading}
               onChange={onChange(index)}
               onKeyDown={onKeyDown(index)}
+              data-testid={`${inputTestId}-input-code-${index}`}
             />
           );
         })}

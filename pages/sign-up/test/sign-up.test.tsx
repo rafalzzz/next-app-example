@@ -156,9 +156,9 @@ describe("Sign-up page", () => {
     });
   });
 
-  /* it("disable submit button when request is pending", async () => {
+  it("disable submit button when sendVerificationCode request is pending", async () => {
     const { findByTestId, queryByTestId } = renderWithProviders(<SignUp />, {
-      preloadedState: {
+      /*       preloadedState: {
         signUp: {
           ...initialState,
           _persist: { version: 1, rehydrated: false },
@@ -171,9 +171,8 @@ describe("Sign-up page", () => {
             [SignUpFormKeys.PASSWORD]: "test1234",
             [SignUpFormKeys.CONFIRM_PASSWORD]: "test1234",
           },
-          ...rootReducer,
         },
-      },
+      }, */
     });
 
     const firstNameInput = await findByTestId(FIRST_NAME_INPUT_TEST_ID);
@@ -185,17 +184,10 @@ describe("Sign-up page", () => {
       CONFIRM_PASSWORD_INPUT_TEST_ID
     );
 
-    fireEvent.change(firstNameInput, { target: { value: "#" } });
-    fireEvent.change(lastNameInput, { target: { value: "#" } });
-    fireEvent.change(emailInput, { target: { value: "test" } });
-    fireEvent.change(phoneNumberInput, { target: { value: "123" } });
-    fireEvent.change(passwordInput, { target: { value: "test" } });
-    fireEvent.change(confirmPasswordInput, { target: { value: "test1" } });
-
     await waitFor(() => {
       fireEvent.change(firstNameInput, { target: { value: "Test" } });
       fireEvent.change(lastNameInput, { target: { value: "Test" } });
-      fireEvent.change(emailInput, { target: { value: CORRECT_EMAIL } });
+      fireEvent.change(emailInput, { target: { value: "test@test.com" } });
       fireEvent.change(phoneNumberInput, { target: { value: "111111111" } });
       fireEvent.change(passwordInput, { target: { value: "test1234" } });
       fireEvent.change(confirmPasswordInput, { target: { value: "test1234" } });
@@ -218,7 +210,6 @@ describe("Sign-up page", () => {
 
     await waitFor(
       () => {
-        expect(formButton).toBeDisabled();
         expect(firstNameError).not.toBeInTheDocument();
         expect(lastNameError).not.toBeInTheDocument();
         expect(emailError).not.toBeInTheDocument();
@@ -230,7 +221,62 @@ describe("Sign-up page", () => {
     );
   });
 
-  it("redirect to Dashboard when user sign-in", async () => {
+  it("display toast with error when sendVerificationCode request is failed", async () => {
+    const { findByTestId, findByText, queryByTestId } = renderWithProviders(
+      <SignUp />
+    );
+
+    const firstNameInput = await findByTestId(FIRST_NAME_INPUT_TEST_ID);
+    const lastNameInput = await findByTestId(LAST_NAME_INPUT_TEST_ID);
+    const emailInput = await findByTestId(EMAIL_INPUT_TEST_ID);
+    const phoneNumberInput = await findByTestId(PHONE_NUMBER_INPUT_TEST_ID);
+    const passwordInput = await findByTestId(PASSWORD_INPUT_TEST_ID);
+    const confirmPasswordInput = await findByTestId(
+      CONFIRM_PASSWORD_INPUT_TEST_ID
+    );
+
+    await waitFor(() => {
+      fireEvent.change(firstNameInput, { target: { value: "Test" } });
+      fireEvent.change(lastNameInput, { target: { value: "Test" } });
+      fireEvent.change(emailInput, { target: { value: "test@test.com" } });
+      fireEvent.change(phoneNumberInput, {
+        target: { value: "111111112" },
+      });
+      fireEvent.change(passwordInput, { target: { value: "test1234" } });
+      fireEvent.change(confirmPasswordInput, { target: { value: "test1234" } });
+    });
+
+    const formButton = await findByTestId(FORM_BUTTON_TEST_ID);
+
+    await waitFor(() => {
+      fireEvent.click(formButton);
+    });
+
+    const firstNameError = queryByTestId(FIRST_NAME_INPUT_ERROR_TEST_ID);
+    const lastNameError = queryByTestId(LAST_NAME_INPUT_ERROR_TEST_ID);
+    const emailError = queryByTestId(EMAIL_INPUT_ERROR_TEST_ID);
+    const phoneNumberError = queryByTestId(PHONE_NUMBER_INPUT_ERROR_TEST_ID);
+    const passwordError = queryByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
+    const confirmPasswordError = queryByTestId(
+      CONFIRM_PASSWORD_INPUT_ERROR_TEST_ID
+    );
+
+    const toastError = await findByText(
+      C.PHONE_NUMBER_IS_ALREADY_TAKEN_MESSAGE
+    );
+
+    await waitFor(() => {
+      expect(firstNameError).not.toBeInTheDocument();
+      expect(lastNameError).not.toBeInTheDocument();
+      expect(emailError).not.toBeInTheDocument();
+      expect(phoneNumberError).not.toBeInTheDocument();
+      expect(passwordError).not.toBeInTheDocument();
+      expect(confirmPasswordError).not.toBeInTheDocument();
+      expect(toastError).toBeInTheDocument();
+    });
+  });
+
+  /* it("redirect to Dashboard when user sign-in", async () => {
     const { findByTestId, queryByTestId } = renderWithProviders(<SignIn />);
 
     const loginInput = await findByTestId(LOGIN_INPUT_TEST_ID);
