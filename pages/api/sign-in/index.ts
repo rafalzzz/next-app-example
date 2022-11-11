@@ -2,10 +2,10 @@ import { serialize } from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
 import * as C from "sign-in/consts/messages";
+import { generateToken } from "sign-in/helpers/generate-token";
 import { SignUpFormKeys } from "sign-up/enums";
 import { decryptPassword, generateResponseMessage } from "helpers/index";
 import { CookieNames } from "enums/cookie-names";
-import { generateToken } from "./helpers";
 
 export default async function handler(
   req: NextApiRequest,
