@@ -1,6 +1,6 @@
 import { PathParams, rest } from "msw";
 import { CORRECT_EMAIL } from "sign-in/consts/emails";
-import * as C from "sign-in/consts/errors";
+import * as C from "sign-in/consts/messages";
 import { SignInRequest } from "sign-in/types";
 import { generateResponseMessage } from "helpers/generate-response-message";
 import { SharedResponse } from "types/response";

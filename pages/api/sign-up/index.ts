@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
+import { SIGNED_UP_SUCCESS_MESSAGE } from "sign-up/consts/messages";
+import { generateResponseMessage } from "helpers/generate-response-message";
 import { parsePhoneNumber } from "helpers/parse-phone-number";
 
 export default async function handler(
@@ -21,7 +23,7 @@ export default async function handler(
   });
 
   if (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json(generateResponseMessage(error.message));
   }
 
   if (verifiedUser.user?.id) {
@@ -33,11 +35,13 @@ export default async function handler(
     });
 
     if (createUserError) {
-      return res.status(400).json({ message: createUserError.message });
+      return res
+        .status(400)
+        .json(generateResponseMessage(createUserError.message));
     }
   }
 
-  return res.status(200).json({
-    message: "Account has been created successfully - You can sign-in now",
-  });
+  return res
+    .status(200)
+    .json(generateResponseMessage(SIGNED_UP_SUCCESS_MESSAGE));
 }

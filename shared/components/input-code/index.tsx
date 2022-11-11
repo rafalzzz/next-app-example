@@ -5,31 +5,34 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { INPUT_CODE_ID_COMMON_PART } from "consts/components-test-ids";
 import * as KEY from "consts/key-codes";
 import { DIGITS_ONLY } from "consts/regex";
 import * as Styled from "./index.styled";
 
 type InputCodeProps = {
   length: number;
-  loading?: boolean;
   focusOnFirstInput?: boolean;
   onComplete: (code: string) => void;
+  loading?: boolean;
+  inputTestId?: string;
 };
-
-const INPUTS_ID_COMMON_PART = "input-code";
 
 export const InputCode = ({
   length,
+  onComplete,
   loading = false,
   focusOnFirstInput = false,
-  onComplete,
+  inputTestId = "false",
 }: InputCodeProps) => {
   const [inputsValues, setInputValues] = useState(
     [...Array(length)].map(() => "")
   );
 
   const changeInputFocus = (inputIndex: number) =>
-    document.getElementById(`${INPUTS_ID_COMMON_PART}-${inputIndex}`)?.focus();
+    document
+      .getElementById(`${INPUT_CODE_ID_COMMON_PART}-${inputIndex}`)
+      ?.focus();
 
   const moveFocusToNextInput = useCallback(
     (inputIndex: number) => changeInputFocus(inputIndex + 1),
@@ -95,7 +98,7 @@ export const InputCode = ({
   );
 
   useEffect(() => {
-    document.getElementById(`${INPUTS_ID_COMMON_PART}-0`)?.focus();
+    document.getElementById(`${INPUT_CODE_ID_COMMON_PART}-0`)?.focus();
     if (focusOnFirstInput) {
     }
   }, [focusOnFirstInput]);
@@ -107,7 +110,7 @@ export const InputCode = ({
           return (
             <input
               key={index}
-              id={`${INPUTS_ID_COMMON_PART}-${index}`}
+              id={`${INPUT_CODE_ID_COMMON_PART}-${index}`}
               type="text"
               inputMode="numeric"
               maxLength={2}
@@ -115,6 +118,7 @@ export const InputCode = ({
               readOnly={loading}
               onChange={onChange(index)}
               onKeyDown={onKeyDown(index)}
+              data-testid={`${inputTestId}-${INPUT_CODE_ID_COMMON_PART}-${index}`}
             />
           );
         })}

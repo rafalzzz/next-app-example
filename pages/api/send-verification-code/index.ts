@@ -1,10 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
+import { SEND_VERIFICATION_CODE_SUCCESS_MESSAGE } from "sign-up/consts/messages";
 import { SignUpFormKeys } from "sign-up/enums";
+import { checkDataType, valueIsAvailable } from "sign-up/helpers";
 import { decryptPassword } from "helpers/decrypt-password";
+import { generateResponseMessage } from "helpers/generate-response-message";
 import { parsePhoneNumber } from "helpers/parse-phone-number";
 import { SharedResponse } from "types/.";
-import { checkDataType, valueIsAvailable } from "./helpers";
 
 export default async function handler(
   { body: { data } }: NextApiRequest,
@@ -36,10 +38,10 @@ export default async function handler(
   });
 
   if (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json(generateResponseMessage(error.message));
   }
 
   return res
     .status(200)
-    .json({ message: "We've send you SMS with verification code" });
+    .json(generateResponseMessage(SEND_VERIFICATION_CODE_SUCCESS_MESSAGE));
 }

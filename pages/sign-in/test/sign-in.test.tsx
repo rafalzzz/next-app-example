@@ -5,7 +5,7 @@ import { renderWithProviders } from "test-utils/.";
 import { mockedPushMethod } from "test-utils/mocked-use-router-methods";
 import { signInApi } from "sign-in/api";
 import { CORRECT_EMAIL } from "sign-in/consts/emails";
-import * as C from "sign-in/consts/errors";
+import * as C from "sign-in/consts/messages";
 import { SignInFormKeys } from "sign-in/enums";
 import { server } from "sign-in/test-utils/server";
 import { Paths } from "enums/paths";
@@ -15,12 +15,12 @@ import SignIn from "..";
 const LOGIN_INPUT_TEST_ID = `${SignInFormKeys.EMAIL}-input`;
 const PASSWORD_INPUT_TEST_ID = `${SignInFormKeys.PASSWORD}-input`;
 const FORM_BUTTON_TEST_ID = `${SIGN_IN}-button`;
-const LOGIN_INPUT_ERROR_TEST_ID = `${SignInFormKeys.PASSWORD}-error`;
+const LOGIN_INPUT_ERROR_TEST_ID = `${SignInFormKeys.EMAIL}-error`;
 const PASSWORD_INPUT_ERROR_TEST_ID = `${SignInFormKeys.PASSWORD}-error`;
 
 const store = setupStore({});
 
-describe("DictionariesPagination", () => {
+describe("Sign-in page", () => {
   beforeAll(() => {
     server.listen();
   });

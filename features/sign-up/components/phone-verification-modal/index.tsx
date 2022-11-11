@@ -5,6 +5,7 @@ import { selectModalIsOpen } from "store/modal";
 import { selectSignUpState } from "store/sign-up";
 import { useAppSelector } from "hooks/.";
 import { RequestState } from "enums/request-state";
+import { SIGN_UP } from "consts/form-test-ids";
 import { TokenValidityCounter } from "../token-validity-counter";
 import * as Styled from "./index.styled";
 
@@ -50,6 +51,7 @@ export const PhoneVerificationModal = () => {
             loading={requestIsPending}
             focusOnFirstInput={modalIsOpened}
             onComplete={onCompleted}
+            inputTestId={SIGN_UP}
           />
           <TokenValidityCounter />
         </Styled.Main>

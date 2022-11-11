@@ -1,11 +1,11 @@
 import { serialize } from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "common/supabase";
-import * as C from "sign-in/consts/errors";
+import * as C from "sign-in/consts/messages";
+import { generateToken } from "sign-in/helpers/generate-token";
 import { SignUpFormKeys } from "sign-up/enums";
 import { decryptPassword, generateResponseMessage } from "helpers/index";
 import { CookieNames } from "enums/cookie-names";
-import { generateToken } from "./helpers";
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,7 +19,7 @@ export default async function handler(
     .eq(SignUpFormKeys.EMAIL, email);
 
   if (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json(generateResponseMessage(error.message));
   }
 
   if (!users.length) {

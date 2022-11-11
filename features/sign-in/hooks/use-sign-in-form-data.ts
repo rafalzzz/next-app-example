@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useSignInMutation } from "sign-in/api";
-import * as C from "sign-in/consts/errors";
+import * as C from "sign-in/consts/messages";
 import { SignInFormKeys } from "sign-in/enums";
 import { SignInRequest } from "sign-in/types";
 import { encryptPassword, generateMessageFieldIsRequired } from "helpers/.";

@@ -1,21 +1,7 @@
 import { NextApiResponse } from "next";
 import { supabase } from "common/supabase";
 import { SignUpFormKeys } from "sign-up/enums";
-import { SendVerificationCodeRequest } from "sign-up/types";
 import { SharedResponse } from "types/.";
-
-export const checkDataType = (
-  data: SendVerificationCodeRequest,
-  res: NextApiResponse<SharedResponse>
-) => {
-  const dataIncludesIncorrectValue = Object.values(data).some(
-    (value) => typeof value !== "string"
-  );
-
-  if (dataIncludesIncorrectValue) {
-    return res.status(400).json({ message: "Wrong phone value" });
-  }
-};
 
 export const valueIsAvailable = async ({
   key,

@@ -14,7 +14,7 @@ interface SignUpState {
   tokenValidityTime: number;
 }
 
-const initialState: SignUpState = {
+export const initialState: SignUpState = {
   sendVerificationCodeRequestState: RequestState.IDLE,
   signUpRequestState: RequestState.IDLE,
   signUpFormValues: null,
