@@ -1,11 +1,16 @@
 import "@testing-library/jest-dom/extend-expect";
 import { fireEvent, waitFor } from "@testing-library/react";
 import { setupStore } from "store";
-import { renderWithProviders } from "test-utils/.";
+import { mockedPushMethod, renderWithProviders } from "test-utils/.";
 import { signUpApi } from "sign-up/api";
 import * as C from "sign-up/consts/messages";
+import { CORRECT_PHONE } from "sign-up/consts/mocked_sign-up_data";
 import { SignUpFormKeys } from "sign-up/enums";
 import { server } from "sign-up/test-utils/server";
+import { initialState } from "store/sign-up";
+import { Paths } from "enums/paths";
+import { RequestState } from "enums/request-state";
+import { INPUT_CODE_ID_COMMON_PART } from "consts/components-test-ids";
 import { SIGN_UP } from "consts/form-test-ids";
 import SignUp from "..";
 
@@ -22,6 +27,29 @@ const EMAIL_INPUT_ERROR_TEST_ID = `${SignUpFormKeys.EMAIL}-error`;
 const PHONE_NUMBER_INPUT_ERROR_TEST_ID = `${SignUpFormKeys.PHONE_NUMBER}-error`;
 const PASSWORD_INPUT_ERROR_TEST_ID = `${SignUpFormKeys.PASSWORD}-error`;
 const CONFIRM_PASSWORD_INPUT_ERROR_TEST_ID = `${SignUpFormKeys.CONFIRM_PASSWORD}-error`;
+const INPUT_CODE_IDS = Array.from(Array(6).keys()).map(
+  (value: number) => `${SIGN_UP}-${INPUT_CODE_ID_COMMON_PART}-${value}`
+);
+
+const preloadedState = {
+  signUp: {
+    ...initialState,
+    _persist: { version: 1, rehydrated: false },
+    sendVerificationCodeRequestState: RequestState.SUCCESS,
+    signUpFormValues: {
+      [SignUpFormKeys.FIRST_NAME]: "Test",
+      [SignUpFormKeys.LAST_NAME]: "Test",
+      [SignUpFormKeys.EMAIL]: "test@test.com",
+      [SignUpFormKeys.PHONE_NUMBER]: "48111111111",
+      [SignUpFormKeys.PASSWORD]: "test1234",
+      [SignUpFormKeys.CONFIRM_PASSWORD]: "test1234",
+    },
+  },
+  modal: {
+    _persist: { version: 1, rehydrated: false },
+    isOpen: true,
+  },
+};
 
 const store = setupStore({});
 
@@ -157,23 +185,7 @@ describe("Sign-up page", () => {
   });
 
   it("disable submit button when sendVerificationCode request is pending", async () => {
-    const { findByTestId, queryByTestId } = renderWithProviders(<SignUp />, {
-      /*       preloadedState: {
-        signUp: {
-          ...initialState,
-          _persist: { version: 1, rehydrated: false },
-          sendVerificationCodeRequestState: RequestState.SUCCESS,
-          signUpFormValues: {
-            [SignUpFormKeys.FIRST_NAME]: "Test",
-            [SignUpFormKeys.LAST_NAME]: "Test",
-            [SignUpFormKeys.EMAIL]: "test@test.com",
-            [SignUpFormKeys.PHONE_NUMBER]: "48111111111",
-            [SignUpFormKeys.PASSWORD]: "test1234",
-            [SignUpFormKeys.CONFIRM_PASSWORD]: "test1234",
-          },
-        },
-      }, */
-    });
+    const { findByTestId, queryByTestId } = renderWithProviders(<SignUp />);
 
     const firstNameInput = await findByTestId(FIRST_NAME_INPUT_TEST_ID);
     const lastNameInput = await findByTestId(LAST_NAME_INPUT_TEST_ID);
@@ -188,7 +200,7 @@ describe("Sign-up page", () => {
       fireEvent.change(firstNameInput, { target: { value: "Test" } });
       fireEvent.change(lastNameInput, { target: { value: "Test" } });
       fireEvent.change(emailInput, { target: { value: "test@test.com" } });
-      fireEvent.change(phoneNumberInput, { target: { value: "111111111" } });
+      fireEvent.change(phoneNumberInput, { target: { value: CORRECT_PHONE } });
       fireEvent.change(passwordInput, { target: { value: "test1234" } });
       fireEvent.change(confirmPasswordInput, { target: { value: "test1234" } });
     });
@@ -210,6 +222,7 @@ describe("Sign-up page", () => {
 
     await waitFor(
       () => {
+        expect(formButton).toBeDisabled();
         expect(firstNameError).not.toBeInTheDocument();
         expect(lastNameError).not.toBeInTheDocument();
         expect(emailError).not.toBeInTheDocument();
@@ -276,15 +289,27 @@ describe("Sign-up page", () => {
     });
   });
 
-  /* it("redirect to Dashboard when user sign-in", async () => {
-    const { findByTestId, queryByTestId } = renderWithProviders(<SignIn />);
+  it("display Modal when sendVerificationCode request is success", async () => {
+    const { findByTestId, queryByTestId } = renderWithProviders(<SignUp />);
 
-    const loginInput = await findByTestId(LOGIN_INPUT_TEST_ID);
+    const firstNameInput = await findByTestId(FIRST_NAME_INPUT_TEST_ID);
+    const lastNameInput = await findByTestId(LAST_NAME_INPUT_TEST_ID);
+    const emailInput = await findByTestId(EMAIL_INPUT_TEST_ID);
+    const phoneNumberInput = await findByTestId(PHONE_NUMBER_INPUT_TEST_ID);
     const passwordInput = await findByTestId(PASSWORD_INPUT_TEST_ID);
+    const confirmPasswordInput = await findByTestId(
+      CONFIRM_PASSWORD_INPUT_TEST_ID
+    );
 
     await waitFor(() => {
-      fireEvent.change(loginInput, { target: { value: CORRECT_EMAIL } });
+      fireEvent.change(firstNameInput, { target: { value: "Test" } });
+      fireEvent.change(lastNameInput, { target: { value: "Test" } });
+      fireEvent.change(emailInput, { target: { value: "test@test.com" } });
+      fireEvent.change(phoneNumberInput, {
+        target: { value: CORRECT_PHONE },
+      });
       fireEvent.change(passwordInput, { target: { value: "test1234" } });
+      fireEvent.change(confirmPasswordInput, { target: { value: "test1234" } });
     });
 
     const formButton = await findByTestId(FORM_BUTTON_TEST_ID);
@@ -293,51 +318,85 @@ describe("Sign-up page", () => {
       fireEvent.click(formButton);
     });
 
-    const loginError = queryByTestId(LOGIN_INPUT_ERROR_TEST_ID);
+    const firstNameError = queryByTestId(FIRST_NAME_INPUT_ERROR_TEST_ID);
+    const lastNameError = queryByTestId(LAST_NAME_INPUT_ERROR_TEST_ID);
+    const emailError = queryByTestId(EMAIL_INPUT_ERROR_TEST_ID);
+    const phoneNumberError = queryByTestId(PHONE_NUMBER_INPUT_ERROR_TEST_ID);
     const passwordError = queryByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
+    const confirmPasswordError = queryByTestId(
+      CONFIRM_PASSWORD_INPUT_ERROR_TEST_ID
+    );
 
     await waitFor(
       () => {
-        expect(formButton).toBeEnabled();
-        expect(loginError).not.toBeInTheDocument();
+        const inputCode = queryByTestId(INPUT_CODE_IDS[0]);
+
+        expect(inputCode).toBeInTheDocument();
+        expect(firstNameError).not.toBeInTheDocument();
+        expect(lastNameError).not.toBeInTheDocument();
+        expect(emailError).not.toBeInTheDocument();
+        expect(phoneNumberError).not.toBeInTheDocument();
         expect(passwordError).not.toBeInTheDocument();
-        expect(mockedPushMethod).toBeCalledTimes(1);
-        expect(mockedPushMethod).toBeCalledWith(Paths.DASHBOARD);
+        expect(confirmPasswordError).not.toBeInTheDocument();
       },
       { timeout: 2500 }
     );
   });
 
-  it("display toast error with error from response", async () => {
-    const { findByTestId, queryByTestId, findByText } = renderWithProviders(
-      <SignIn />
-    );
-
-    const loginInput = await findByTestId(LOGIN_INPUT_TEST_ID);
-    const passwordInput = await findByTestId(PASSWORD_INPUT_TEST_ID);
-
-    await waitFor(() => {
-      fireEvent.change(loginInput, { target: { value: "test1234@test.com" } });
-      fireEvent.change(passwordInput, { target: { value: "test1234" } });
+  it("display toast with error message when user enter invalid code", async () => {
+    const { findByTestId, findByText } = renderWithProviders(<SignUp />, {
+      preloadedState,
     });
 
-    const formButton = await findByTestId(FORM_BUTTON_TEST_ID);
+    const firstInputCode = await findByTestId(INPUT_CODE_IDS[0]);
+    const secondInputCode = await findByTestId(INPUT_CODE_IDS[1]);
+    const thirdInputCode = await findByTestId(INPUT_CODE_IDS[2]);
+    const fourthInputCode = await findByTestId(INPUT_CODE_IDS[3]);
+    const fifthInputCode = await findByTestId(INPUT_CODE_IDS[4]);
+    const sixthInputCode = await findByTestId(INPUT_CODE_IDS[5]);
 
     await waitFor(() => {
-      fireEvent.click(formButton);
+      fireEvent.change(firstInputCode, { target: { value: "1" } });
+      fireEvent.change(secondInputCode, { target: { value: "1" } });
+      fireEvent.change(thirdInputCode, { target: { value: "1" } });
+      fireEvent.change(fourthInputCode, {
+        target: { value: "1" },
+      });
+      fireEvent.change(fifthInputCode, { target: { value: "1" } });
+      fireEvent.change(sixthInputCode, { target: { value: "2" } });
     });
 
-    const loginError = queryByTestId(LOGIN_INPUT_ERROR_TEST_ID);
-    const passwordError = queryByTestId(PASSWORD_INPUT_ERROR_TEST_ID);
+    const toastError = await findByText(C.INVALID_TOKEN);
 
-    const toastError = await findByText(C.USER_DOES_NOT_EXIST_MESSAGE);
+    expect(toastError).toBeInTheDocument();
+  });
+
+  it("redirect user to sign-in page when account has been created successfully", async () => {
+    const { findByTestId } = renderWithProviders(<SignUp />, {
+      preloadedState,
+    });
+
+    const firstInputCode = await findByTestId(INPUT_CODE_IDS[0]);
+    const secondInputCode = await findByTestId(INPUT_CODE_IDS[1]);
+    const thirdInputCode = await findByTestId(INPUT_CODE_IDS[2]);
+    const fourthInputCode = await findByTestId(INPUT_CODE_IDS[3]);
+    const fifthInputCode = await findByTestId(INPUT_CODE_IDS[4]);
+    const sixthInputCode = await findByTestId(INPUT_CODE_IDS[5]);
 
     await waitFor(() => {
-      expect(formButton).toBeEnabled();
-      expect(loginError).not.toBeInTheDocument();
-      expect(passwordError).not.toBeInTheDocument();
-      expect(toastError).toBeInTheDocument();
-      expect(mockedPushMethod).not.toBeCalled();
+      fireEvent.change(firstInputCode, { target: { value: "1" } });
+      fireEvent.change(secondInputCode, { target: { value: "1" } });
+      fireEvent.change(thirdInputCode, { target: { value: "1" } });
+      fireEvent.change(fourthInputCode, {
+        target: { value: "1" },
+      });
+      fireEvent.change(fifthInputCode, { target: { value: "1" } });
+      fireEvent.change(sixthInputCode, { target: { value: "1" } });
     });
-  }); */
+
+    await waitFor(() => {
+      expect(mockedPushMethod).toBeCalledTimes(1);
+      expect(mockedPushMethod).toBeCalledWith(Paths.SIGN_IN);
+    });
+  });
 });
