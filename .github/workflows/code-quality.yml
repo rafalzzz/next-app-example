@@ -15,16 +15,16 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: "^14.17.0"
+          node-version: "^18.8.3"
 
       - name: Cache dependencies
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.OS }}-dbm-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-dbn-${{ env.cache-name }}-
-            ${{ runner.OS }}-dbm-
+            ${{ runner.OS }}-${{ env.cache-name }}-
+            ${{ runner.OS }}-
       - name: Install dependencies
         run: yarn install
 
