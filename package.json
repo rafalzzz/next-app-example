@@ -9,7 +9,7 @@
     "lint": "next lint",
     "prepare": "husky install",
     "pre-commit": "next lint --fix && git add -A .",
-    "test": "jest --watch",
+    "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },

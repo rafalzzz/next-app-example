@@ -1,0 +1,35 @@
+name: Code Quality
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  code-quality:
+    name: Lint & test source code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "^18.8.3"
+
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-${{ env.cache-name }}-
+            ${{ runner.OS }}-
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run linter
+        run: yarn lint
+
+      - name: Run tests
+        run: yarn test
